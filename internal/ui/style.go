@@ -8,49 +8,33 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type textStyle struct {
-	help   lipgloss.Style
-	match  lipgloss.Style
-	normal lipgloss.Style
-}
+// text-style
+var (
+	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Render
+	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color("0")).Background(lipgloss.Color("2")).Bold(true).Render
+	tsNormal    = lipgloss.NewStyle().Render
+)
 
-type borderStyle struct {
-	error   lipgloss.Style
-	focus   lipgloss.Style
-	unfocus lipgloss.Style
-}
-
-func getBorderStyle() borderStyle {
-	return borderStyle{
-		error:   lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("9")),
-		focus:   lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("12")),
-		unfocus: lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()),
-	}
-}
-
-func getTextStyle() textStyle {
-	return textStyle{
-		help:   lipgloss.NewStyle().Foreground(lipgloss.Color("8")),
-		match:  lipgloss.NewStyle().Foreground(lipgloss.Color("0")).Background(lipgloss.Color("2")).Bold(true),
-		normal: lipgloss.NewStyle(),
-	}
-}
+// border-style
+var (
+	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("9")).Render
+	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("12")).Render
+	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).Render
+)
 
 func PreviewStyles() string {
 	var b strings.Builder
-	bs := getBorderStyle()
-	ts := getTextStyle()
 
 	fmt.Fprint(&b,
-		"\n"+bs.error.Render("\tERROR\t")+
-			"\n"+bs.focus.Render("\tFOCUS\t")+
-			"\n"+bs.unfocus.Render("\tUNFOCUS\t"),
+		"\n"+bsError("\tERROR\t")+
+			"\n"+bsFocus("\tFOCUS\t")+
+			"\n"+bsUnfocus("\tUNFOCUS\t"),
 	)
 	fmt.Fprint(&b,
 		"\n\n"+
-			ts.help.Render("\tHELP\t")+
-			ts.match.Render("\tMATCH\t")+
-			ts.normal.Render("\tNORMAL\t"),
+			tsHelp("\tHELP\t")+
+			tsHighlight("\tHIGHLIGHT\t")+
+			tsNormal("\tNORMAL\t"),
 	)
 	return b.String()
 }
