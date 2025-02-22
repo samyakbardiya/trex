@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-func GetAllMatchingIndex(expr string, text []byte) ([][]int, error) {
+func FindMatches(expr string, text []byte) ([][]int, error) {
 	if expr == "" {
 		return nil, fmt.Errorf("empty regular expression")
 	}
@@ -19,5 +19,16 @@ func GetAllMatchingIndex(expr string, text []byte) ([][]int, error) {
 	}
 
 	matches := re.FindAllIndex(text, -1)
+	if matches == nil {
+		matches = [][]int{}
+	}
+
 	return matches, nil
+}
+
+func IsValidMatch(match []int, contentLen int) bool {
+	return len(match) == 2 &&
+		match[0] >= 0 &&
+		match[1] > match[0] &&
+		match[1] <= contentLen
 }

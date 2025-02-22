@@ -33,12 +33,14 @@ var (
 )
 
 type Model struct {
-	state     CurrFocus
-	err       error
-	content   string
-	expr      string
-	textInput textinput.Model
-	viewport  viewport.Model
+	state       CurrFocus
+	err         error
+	content     string
+	highlighted string
+	expr        string
+	matches     [][]int
+	textInput   textinput.Model
+	viewport    viewport.Model
 }
 
 func InitialModel(content string) Model {
