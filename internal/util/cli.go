@@ -20,6 +20,6 @@ func InitLogging() *os.File {
 		fmt.Println("fatal:", err)
 		os.Exit(1)
 	}
-	log.Println("logging...")
+	log.Println("########################################")
 	return f
 }

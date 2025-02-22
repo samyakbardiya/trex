@@ -35,7 +35,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 
 	filePath, err := util.ValidateFilepath(args[0])
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid file path: %w", err)
 	}
 	ctx := context.WithValue(cmd.Context(), util.KeyFilePath, filePath)
 	cmd.SetContext(ctx)
@@ -48,15 +48,17 @@ func run(cmd *cobra.Command, args []string) error {
 	var err error
 
 	if filePath, ok := cmd.Context().Value(util.KeyFilePath).(string); ok {
+		log.Printf("Reading file: %s\n", filePath)
 		data, err = os.ReadFile(filePath)
 		if err != nil {
 			return fmt.Errorf("failed to read file %q: %w", filePath, err)
 		}
 	} else {
+		log.Println("Using default text")
 		data = []byte(util.DefaultText)
 	}
-	log.Printf("Processing %d bytes of data\n", len(data))
-	log.Printf("Proccessed file:\n%s\n", string(data))
+	log.Printf("Processing %d bytes of data", len(data))
+	log.Printf("Content:\n%s", string(data))
 
 	return nil
 }
