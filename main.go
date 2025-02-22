@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"github.com/samyakbardiya/trex/cmd"
+	"github.com/samyakbardiya/trex/internal/util"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	f := util.InitLogging()
+	cmd.Execute()
+	defer f.Close()
 }
