@@ -54,7 +54,7 @@ func InitialModel(content string) Model {
 		textInput: ti,
 		state:     TextInput,
 		err:       nil,
-		content:   string(content),
+		content:   content,
 	}
 }
 

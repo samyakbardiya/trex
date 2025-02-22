@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 )
 
@@ -23,6 +24,7 @@ func FindMatches(expr string, text []byte) ([][]int, error) {
 		matches = [][]int{}
 	}
 
+	log.Printf("MATCHES:\n\texpr: %q\n\tmatches: %v", expr, matches)
 	return matches, nil
 }
 
