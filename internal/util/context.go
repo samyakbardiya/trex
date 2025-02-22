@@ -3,11 +3,15 @@ package util
 type ContextKey string
 
 const (
+	// context key for the file data.
+	KeyFileData ContextKey = "filedata"
+
+	// example for cli usage
 	CliExample = `  trex                   # Run with default sample text
   trex myfile.txt        # Process specific file
   trex /path/to/file.md  # Process file with absolute path`
 
-	// Default text to use IF no file is provided
+	// defalut text content
 	DefaultText = `
 Lorem ipsum odor amet, consectetuer adipiscing elit. Semper tristique curabitur netus facilisi commodo pellentesque. Dignissim habitant metus massa fermentum aliquam leo praesent vestibulum. Duis et enim ex non conubia leo. Aptent gravida hendrerit odio ultricies cras dolor vulputate placerat? Posuere lacus interdum; ac curae nibh sit vestibulum. Fusce elementum nec sed purus sollicitudin, class ullamcorper purus!
 
@@ -19,7 +23,4 @@ Massa hac conubia cursus elementum tempor laoreet posuere dictum. Molestie non s
 
 Venenatis pellentesque ultricies hac condimentum; vel enim. Ligula mauris tristique auctor nam elit fames et? Diam fringilla habitant orci nisi convallis nibh velit. Malesuada arcu taciti nisi bibendum ultrices lacus porttitor. Nibh sem praesent rhoncus ultricies tempor commodo orci. Tristique ante lacinia ipsum orci eu nisi. Risus maximus cursus tincidunt cras lorem orci velit dolor hac. Turpis a taciti natoque; sit ut arcu suspendisse lacinia. Ornare convallis mus volutpat etiam pulvinar euismod.
 `
-
-	// KeyFilePath is the context key for file path
-	KeyFilePath ContextKey = "filepath"
 )

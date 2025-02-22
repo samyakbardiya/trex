@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -29,36 +28,45 @@ func Execute() {
 }
 
 func preRun(cmd *cobra.Command, args []string) error {
+	var (
+		data     []byte
+		filePath string
+		err      error
+	)
 	if len(args) == 0 {
-		return nil
+		log.Println("Using default text")
+		data = []byte(util.DefaultText)
+	} else {
+		log.Println("Reading from file")
+		filePath, err = util.GetFilePath(args[0])
+		if err != nil {
+			return err
+		}
+		data, err = os.ReadFile(filePath)
+		if err != nil {
+			return err
+		}
 	}
-
-	filePath, err := util.ValidateFilepath(args[0])
-	if err != nil {
-		return fmt.Errorf("invalid file path: %w", err)
-	}
-	ctx := context.WithValue(cmd.Context(), util.KeyFilePath, filePath)
-	cmd.SetContext(ctx)
-
+	cmd.SetContext(context.WithValue(cmd.Context(), util.KeyFileData, data))
 	return nil
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	var data []byte
-	var err error
+	// TODO: Read file and pass to the UI
+	//
+	// file, ok := cmd.Context().Value(util.KeyFileData).([]byte)
+	// if !ok {
+	// 	panic("Unable to read the content")
+	// }
 
-	if filePath, ok := cmd.Context().Value(util.KeyFilePath).(string); ok {
-		log.Printf("Reading file: %s\n", filePath)
-		data, err = os.ReadFile(filePath)
-		if err != nil {
-			return fmt.Errorf("failed to read file %q: %w", filePath, err)
-		}
-	} else {
-		log.Println("Using default text")
-		data = []byte(util.DefaultText)
-	}
-	log.Printf("Processing %d bytes of data", len(data))
-	log.Printf("Content:\n%s", string(data))
+	// NOTE: usage example
+	//
+	// expr := "Lorem"
+	// re, err := util.GetAllMatchingIndex(expr, file)
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println("re", re)
 
 	return nil
 }
