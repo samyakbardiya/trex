@@ -1,11 +1,8 @@
 package ui
 
 import (
-	"strings"
-
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/samyakbardiya/trex/internal/util"
 )
 
 // Update handles all UI state updates and user input
@@ -44,7 +41,7 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 	m.viewport = viewport.New(msg.Width-4, msg.Height-8)
-	m.viewport.SetContent(m.regexData.Highlighted)
+	m.viewport.SetContent(m.matchRes.Highlighted)
 	return m, nil
 }
 
@@ -58,8 +55,8 @@ func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.input, cmd = m.input.Update(msg)
 
-	if m.regexData.Regexpr != m.input.Value() {
-		m.regexData.Regexpr = m.input.Value()
+	if m.matchRes.Pattern != m.input.Value() {
+		m.matchRes.Pattern = m.input.Value()
 		m.updateRegexMatches()
 	}
 
@@ -67,19 +64,12 @@ func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) updateRegexMatches() {
-	var err error
-	m.regexData.Matches, err = util.FindMatches(
-		m.regexData.Regexpr,
-		[]byte(m.regexData.Raw),
-	)
-	if err != nil {
+	if err := m.matchRes.FindMatches(); err != nil {
 		m.err = err
 		return
 	}
-
-	highlighted := highlightMatches(m.regexData.Raw, m.regexData.Matches)
-	m.regexData.Highlighted = highlighted
-	m.viewport.SetContent(highlighted)
+	m.matchRes.HighlightMatches(tsHighlight)
+	m.viewport.SetContent(m.matchRes.Highlighted)
 }
 
 func (m model) getNextFocus() focus {
@@ -91,37 +81,4 @@ func (m model) getNextFocus() focus {
 	default:
 		return focusInput
 	}
-}
-
-func highlightMatches(content string, matches [][]int) string {
-	if len(matches) == 0 || len(content) == 0 {
-		return content
-	}
-
-	segments := make([]string, 0, len(matches)*2+1)
-	lastIndex := 0
-
-	// Process matches in order
-	for _, match := range matches {
-		if !util.IsValidMatch(match, len(content)) {
-			continue
-		}
-
-		// Add text before match
-		if match[0] > lastIndex {
-			segments = append(segments, content[lastIndex:match[0]])
-		}
-
-		// Add highlighted match
-		matchedText := content[match[0]:match[1]]
-		segments = append(segments, tsHighlight(matchedText))
-		lastIndex = match[1]
-	}
-
-	// Add remaining text after last match
-	if lastIndex < len(content) {
-		segments = append(segments, content[lastIndex:])
-	}
-
-	return strings.Join(segments, "")
 }

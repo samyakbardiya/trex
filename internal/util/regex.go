@@ -4,38 +4,73 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strings"
 )
 
-type RegexMatch struct {
-	Raw         string
+type MatchResult struct {
+	InputText   string
 	Highlighted string
-	Regexpr     string
+	Pattern     string
 	Matches     [][]int
 }
 
-func FindMatches(expr string, text []byte) ([][]int, error) {
-	if len(text) == 0 {
-		return nil, fmt.Errorf("empty text")
+func (mr *MatchResult) FindMatches() error {
+	if len(mr.InputText) == 0 {
+		return fmt.Errorf("empty text")
 	}
 
 	// TODO: implment customizable flags
-	re, err := regexp.Compile("(?m)" + expr)
+	re, err := regexp.Compile("(?m)" + mr.Pattern)
 	if err != nil {
-		return nil, fmt.Errorf("invalid regular expression: %q: %w", expr, err)
+		return fmt.Errorf("invalid regular expression: %q: %w", mr.Pattern, err)
 	}
 
-	matches := re.FindAllIndex(text, -1)
-	if matches == nil {
-		matches = [][]int{}
-	}
+	mr.Matches = re.FindAllIndex([]byte(mr.InputText), -1)
 
-	log.Printf("MATCHES:\n\texpr: %q\n\tmatches: %v", expr, matches)
-	return matches, nil
+	log.Printf("MATCHES:\n\texpr: %q\n\tmatches: %v", mr.Pattern, mr.Matches)
+	return nil
 }
 
-func IsValidMatch(match []int, contentLen int) bool {
+func (mr *MatchResult) IsValidMatch(index int) bool {
+	if index < 0 || index >= len(mr.Matches) {
+		return false
+	}
+
+	match := mr.Matches[index]
 	return len(match) == 2 &&
 		match[0] >= 0 &&
 		match[1] > match[0] &&
-		match[1] <= contentLen
+		match[1] <= len(mr.InputText)
+}
+
+func (mr *MatchResult) HighlightMatches(styleFunc func(...string) string) {
+	if len(mr.InputText) == 0 || len(mr.Matches) == 0 {
+		mr.Highlighted = mr.InputText
+		return
+	}
+
+	var sb strings.Builder
+	lastIndex := 0
+
+	for i, match := range mr.Matches {
+		if !mr.IsValidMatch(i) {
+			continue
+		}
+
+		if match[0] > lastIndex {
+			sb.WriteString(mr.InputText[lastIndex:match[0]])
+		}
+
+		matchedText := mr.InputText[match[0]:match[1]]
+		sb.WriteString(styleFunc(matchedText))
+
+		lastIndex = match[1]
+	}
+
+	if lastIndex < len(mr.InputText) {
+		sb.WriteString(mr.InputText[lastIndex:])
+	}
+
+	mr.Highlighted = sb.String()
+	log.Printf("highlighted:\n%q\n%s", mr.Highlighted, mr.Highlighted)
 }

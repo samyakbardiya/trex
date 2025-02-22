@@ -15,11 +15,11 @@ const (
 )
 
 type model struct {
-	focus     focus
-	regexData util.RegexMatch
-	input     textinput.Model
-	viewport  viewport.Model
-	err       error
+	focus    focus
+	matchRes util.MatchResult
+	input    textinput.Model
+	viewport viewport.Model
+	err      error
 }
 
 func New(initialContent string) model {
@@ -30,8 +30,8 @@ func New(initialContent string) model {
 	return model{
 		input: input,
 		focus: focusInput,
-		regexData: util.RegexMatch{
-			Raw:         initialContent,
+		matchRes: util.MatchResult{
+			InputText:   initialContent,
 			Highlighted: initialContent,
 		},
 	}
