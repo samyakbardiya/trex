@@ -52,7 +52,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	p := tea.NewProgram(
-		ui.InitialModel(string(data)),
+		ui.New(string(data)),
 		tea.WithAltScreen(),
 		tea.WithMouseCellMotion(),
 	)

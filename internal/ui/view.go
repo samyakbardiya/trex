@@ -1,20 +1,36 @@
 package ui
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/lipgloss"
 )
 
-func (m Model) View() string {
-	var s string
-	switch m.state {
-	case TextInput:
-		s += lipgloss.JoinVertical(lipgloss.Top, focusedModelStyle.Render(m.textInput.View()), modelStyle.Render(m.viewport.View()))
-	case ContentView:
-		s += lipgloss.JoinVertical(lipgloss.Top, modelStyle.Render(m.textInput.View()), focusedModelStyle.Render(m.viewport.View()))
+const (
+	helpText = "\ntab: focus next • q: exit\n"
+)
+
+func (m model) View() string {
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		m.renderInputField(),
+		m.renderContentView(),
+		m.renderHelpText(),
+	)
+}
+
+func (m model) renderInputField() string {
+	if m.focus == focusInput {
+		return bsFocus(m.input.View())
 	}
-	currentFocus := m.currentFocusedModel()
-	s += helpStyle.Render(fmt.Sprintf("\ntab: focus next • n: new %s • q: exit\n", currentFocus))
-	return s
+	return bsUnfocus(m.input.View())
+}
+
+func (m model) renderContentView() string {
+	if m.focus == focusContent {
+		return bsFocus(m.viewport.View())
+	}
+	return bsUnfocus(m.viewport.View())
+}
+
+func (m model) renderHelpText() string {
+	return tsHelp(helpText)
 }

@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -9,88 +8,120 @@ import (
 	"github.com/samyakbardiya/trex/internal/util"
 )
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	var cmds []tea.Cmd
-
+// Update handles all UI state updates and user input
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-
-	// TODO: Handle Error
-	case ErrMsg:
-		m.err = msg
-		return m, nil
-
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
-			return m, tea.Quit
-		case "tab":
-			// update whichever model is focused
-			switch m.state {
-			case TextInput:
-				m.state = ContentView
-			case ContentView:
-				m.state = TextInput
-			default:
-				m.err = fmt.Errorf("invalid state")
-			}
-		}
-
-		// pass KeyMsg to the focused-box
-		switch m.state {
-		case TextInput:
-			m.textInput, cmd = m.textInput.Update(msg)
-			m.expr = m.textInput.Value()
-			m.matches, m.err = util.FindMatches(m.expr, []byte(m.content))
-			m.highlighted = highlightContent(m.content, m.matches, tsHighlight)
-			m.viewport.SetContent(m.highlighted)
-			cmds = append(cmds, cmd)
-		case ContentView:
-			m.viewport, cmd = m.viewport.Update(msg)
-			cmds = append(cmds, cmd)
-		}
-
+		return m.handleKeyMsg(msg)
 	case tea.WindowSizeMsg:
-		customWidth := msg.Width - 2
-		customHeight := msg.Height - 15
-
-		m.viewport = viewport.New(customWidth, customHeight)
-		m.viewport.SetContent(m.content)
+		return m.handleWindowSizeMsg(msg)
+	case tea.MouseMsg:
+		return m.handleMouseMsg(msg)
+	default:
+		return m, nil
 	}
-
-	return m, tea.Batch(cmds...)
 }
 
-func highlightContent(
-	content string,
-	matches [][]int,
-	styleFunc func(...string) string,
-) string {
-	contentLen := len(content)
-	if len(matches) == 0 || contentLen == 0 {
+func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.Type {
+	case tea.KeyEsc, tea.KeyCtrlC:
+		return m, tea.Quit
+	case tea.KeyTab:
+		m.focus = m.getNextFocus()
+	}
+
+	var cmd tea.Cmd
+	switch m.focus {
+	case focusInput:
+		return m.handleInputUpdate(msg)
+	case focusContent:
+		m.viewport, cmd = m.viewport.Update(msg)
+		return m, cmd
+	}
+
+	return m, nil
+}
+
+func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
+	m.viewport = viewport.New(msg.Width-4, msg.Height-8)
+	m.viewport.SetContent(m.regexData.Highlighted)
+	return m, nil
+}
+
+func (m model) handleMouseMsg(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.viewport, cmd = m.viewport.Update(msg)
+	return m, cmd
+}
+
+func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.input, cmd = m.input.Update(msg)
+
+	if m.regexData.Regexpr != m.input.Value() {
+		m.regexData.Regexpr = m.input.Value()
+		m.updateRegexMatches()
+	}
+
+	return m, cmd
+}
+
+func (m *model) updateRegexMatches() {
+	var err error
+	m.regexData.Matches, err = util.FindMatches(
+		m.regexData.Regexpr,
+		[]byte(m.regexData.Raw),
+	)
+	if err != nil {
+		m.err = err
+		return
+	}
+
+	highlighted := highlightMatches(m.regexData.Raw, m.regexData.Matches)
+	m.regexData.Highlighted = highlighted
+	m.viewport.SetContent(highlighted)
+}
+
+func (m model) getNextFocus() focus {
+	switch m.focus {
+	case focusInput:
+		return focusContent
+	case focusContent:
+		return focusInput
+	default:
+		return focusInput
+	}
+}
+
+func highlightMatches(content string, matches [][]int) string {
+	if len(matches) == 0 || len(content) == 0 {
 		return content
 	}
 
-	var sb strings.Builder
-	sb.Grow(len(content) * 2)
+	segments := make([]string, 0, len(matches)*2+1)
+	lastIndex := 0
 
-	for i := len(matches) - 1; i >= 0; i-- {
-		match := matches[i]
-		if !util.IsValidMatch(match, contentLen) {
+	// Process matches in order
+	for _, match := range matches {
+		if !util.IsValidMatch(match, len(content)) {
 			continue
 		}
 
+		// Add text before match
+		if match[0] > lastIndex {
+			segments = append(segments, content[lastIndex:match[0]])
+		}
+
+		// Add highlighted match
 		matchedText := content[match[0]:match[1]]
-		styledText := styleFunc(matchedText)
-
-		sb.WriteString(content[:match[0]])
-		sb.WriteString(styledText)
-		sb.WriteString(content[match[1]:])
-
-		content = sb.String()
-		sb.Reset()
-		sb.Grow(len(content) * 2)
+		segments = append(segments, tsHighlight(matchedText))
+		lastIndex = match[1]
 	}
 
-	return content
+	// Add remaining text after last match
+	if lastIndex < len(content) {
+		segments = append(segments, content[lastIndex:])
+	}
+
+	return strings.Join(segments, "")
 }

@@ -6,10 +6,14 @@ import (
 	"regexp"
 )
 
+type RegexMatch struct {
+	Raw         string
+	Highlighted string
+	Regexpr     string
+	Matches     [][]int
+}
+
 func FindMatches(expr string, text []byte) ([][]int, error) {
-	if expr == "" {
-		return nil, fmt.Errorf("empty regular expression")
-	}
 	if len(text) == 0 {
 		return nil, fmt.Errorf("empty text")
 	}
