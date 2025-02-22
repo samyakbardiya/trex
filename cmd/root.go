@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/samyakbardiya/trex/internal/ui"
 	"github.com/samyakbardiya/trex/internal/util"
 	"github.com/spf13/cobra"
 )
@@ -52,12 +55,10 @@ func preRun(cmd *cobra.Command, args []string) error {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	// TODO: Read file and pass to the UI
-	//
-	// file, ok := cmd.Context().Value(util.KeyFileData).([]byte)
-	// if !ok {
-	// 	panic("Unable to read the content")
-	// }
+	file, ok := cmd.Context().Value(util.KeyFileData).([]byte)
+	if !ok {
+		return fmt.Errorf("unable to read content")
+	}
 
 	// NOTE: usage example
 	//
@@ -67,6 +68,11 @@ func run(cmd *cobra.Command, args []string) error {
 	// 	log.Fatalln(err)
 	// }
 	// log.Println("re", re)
+
+	p := tea.NewProgram(ui.InitialModel(string(file)), tea.WithAltScreen(), tea.WithMouseCellMotion())
+	if _, err := p.Run(); err != nil {
+		return fmt.Errorf("error while running program: %w", err)
+	}
 
 	return nil
 }
