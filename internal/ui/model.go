@@ -7,6 +7,7 @@ import (
 	"github.com/samyakbardiya/trex/internal/util"
 )
 
+// focus represents the current focus state of the UI.
 type focus uint
 
 const (
@@ -15,8 +16,8 @@ const (
 )
 
 type model struct {
-	focus    focus
-	matchRes util.MatchResult
+	focus    focus            // current focus
+	matchRes util.MatchResult // result of the regex matching
 	input    textinput.Model
 	viewport viewport.Model
 	err      error

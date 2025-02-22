@@ -35,12 +35,18 @@ func resolveFilePath(path string) (string, error) {
 }
 
 func validateFile(path string) error {
+	const maxFileSize = 10 * 1024 * 1024 // 10MB limit
+
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return fmt.Errorf("file does not exist: %s", path)
 		}
 		return fmt.Errorf("failed to check file %q: %w", path, err)
+	}
+
+	if fileInfo.Size() > maxFileSize {
+		return fmt.Errorf("file size exceeds limit of %d bytes", maxFileSize)
 	}
 
 	if fileInfo.IsDir() {

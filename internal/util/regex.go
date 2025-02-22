@@ -8,10 +8,10 @@ import (
 )
 
 type MatchResult struct {
-	InputText   string
-	Highlighted string
-	Pattern     string
-	Matches     [][]int
+	InputText   string  // input text to be matched
+	Highlighted string  // highlighted match result
+	Pattern     string  // regex pattern used for matching
+	Matches     [][]int // positions of teh matches found
 }
 
 func (mr *MatchResult) FindMatches() error {
