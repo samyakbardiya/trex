@@ -18,6 +18,9 @@ func (m model) View() string {
 }
 
 func (m model) renderInputField() string {
+	if m.err != nil {
+		return bsError(m.input.View())
+	}
 	if m.focus == focusInput {
 		return bsFocus(m.input.View())
 	}

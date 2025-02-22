@@ -5,7 +5,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// Update handles all UI state updates and user input
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -64,8 +63,7 @@ func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) updateRegexMatches() {
-	if err := m.matchRes.FindMatches(); err != nil {
-		m.err = err
+	if m.err = m.matchRes.FindMatches(); m.err != nil {
 		return
 	}
 	m.matchRes.HighlightMatches(tsHighlight)

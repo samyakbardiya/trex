@@ -34,6 +34,7 @@ func New(initialContent string) model {
 			InputText:   initialContent,
 			Highlighted: initialContent,
 		},
+		err: nil,
 	}
 }
 
