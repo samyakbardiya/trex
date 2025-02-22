@@ -22,12 +22,14 @@ var rootCmd = &cobra.Command{
 	SilenceUsage: true,
 }
 
+// Execute executes the root command of the CLI and exits the program with a status code of 1 if an error occurs.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
+// preRun validates the file path argument for the command. If an argument is provided, it checks that the path is valid using util.ValidateFilepath and, if valid, stores it in the command's context under util.KeyFilePath. It returns an error if validation fails; if no argument is present, it returns nil.
 func preRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return nil
@@ -43,6 +45,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+// run retrieves an optional file path from the command's context. If a file path is present, it reads the file's content; otherwise, it uses a default text. The function logs the size and content of the data and returns an error if file reading fails.
 func run(cmd *cobra.Command, args []string) error {
 	var data []byte
 	var err error
