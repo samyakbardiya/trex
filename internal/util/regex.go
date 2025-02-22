@@ -14,7 +14,8 @@ func FindMatches(expr string, text []byte) ([][]int, error) {
 		return nil, fmt.Errorf("empty text")
 	}
 
-	re, err := regexp.Compile(expr)
+	// TODO: implment customizable flags
+	re, err := regexp.Compile("(?m)" + expr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid regular expression: %q: %w", expr, err)
 	}
