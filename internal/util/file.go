@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func ValidateFilepath(path string) (string, error) {
+func GetFilePath(path string) (string, error) {
 	absPath, err := filepath.Abs(filepath.Clean(path))
 	if err != nil {
 		return "", fmt.Errorf("failed to resolve path %q: %w", path, err)
