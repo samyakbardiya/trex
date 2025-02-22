@@ -15,12 +15,23 @@ const (
 	focusContent
 )
 
+// state represents the of the application
+type state uint
+
+const (
+	stateWorking state = iota
+	stateQuiting
+)
+
 type model struct {
-	focus    focus            // current focus
-	matchRes util.MatchResult // result of the regex matching
-	input    textinput.Model
-	viewport viewport.Model
-	err      error
+	state    state            // current state of the application
+	focus    focus            // current focus of the UI
+	matchRes util.MatchResult // result of the regex matching operation
+	input    textinput.Model  // model for handling input
+	viewport viewport.Model   // model for handling content
+	width    int              // width of the window
+	height   int              // height of the window
+	err      error            // any error encountered during application execution
 }
 
 func New(initialContent string) model {
@@ -29,13 +40,14 @@ func New(initialContent string) model {
 	input.Focus()
 
 	return model{
-		input: input,
+		state: stateWorking,
 		focus: focusInput,
 		matchRes: util.MatchResult{
 			InputText:   initialContent,
 			Highlighted: initialContent,
 		},
-		err: nil,
+		input: input,
+		err:   nil,
 	}
 }
 

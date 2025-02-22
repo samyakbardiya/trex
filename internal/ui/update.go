@@ -20,10 +20,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.Type {
-	case tea.KeyEsc, tea.KeyCtrlC:
-		return m, tea.Quit
+	case tea.KeyEsc:
+		return m.toggleState()
 	case tea.KeyTab:
-		m.focus = m.getNextFocus()
+		return m.getNextFocus()
+	case tea.KeyCtrlC:
+		return m, tea.Quit
+	}
+
+	if m.state == stateQuiting {
+		switch msg.String() {
+		case "y", "Y":
+			return m, tea.Quit
+		default:
+			return m.toggleState()
+		}
 	}
 
 	var cmd tea.Cmd
@@ -39,7 +50,9 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
-	m.viewport = viewport.New(msg.Width-4, msg.Height-8)
+	m.width = msg.Width
+	m.height = msg.Height
+	m.viewport = viewport.New(m.width-4, m.height-8)
 	m.viewport.SetContent(m.matchRes.Highlighted)
 	return m, nil
 }
@@ -66,17 +79,30 @@ func (m *model) updateRegexMatches() {
 	if m.err = m.matchRes.FindMatches(); m.err != nil {
 		return
 	}
-	m.matchRes.HighlightMatches(tsHighlight)
+	m.matchRes.HighlightMatches(tsHighlight.Render)
 	m.viewport.SetContent(m.matchRes.Highlighted)
 }
 
-func (m model) getNextFocus() focus {
+func (m *model) getNextFocus() (tea.Model, tea.Cmd) {
 	switch m.focus {
 	case focusInput:
-		return focusContent
+		m.focus = focusContent
 	case focusContent:
-		return focusInput
+		m.focus = focusInput
 	default:
-		return focusInput
+		m.focus = focusInput
 	}
+	return m, nil
+}
+
+func (m *model) toggleState() (tea.Model, tea.Cmd) {
+	switch m.state {
+	case stateWorking:
+		m.state = stateQuiting
+	case stateQuiting:
+		m.state = stateWorking
+	default:
+		m.state = stateWorking
+	}
+	return m, nil
 }

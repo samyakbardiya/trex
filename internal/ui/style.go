@@ -20,29 +20,29 @@ const (
 
 // text-style
 var (
-	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cGray)).Render
-	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true).Render
-	tsNormal    = lipgloss.NewStyle().Render
+	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cGray))
+	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true)
+	tsNormal    = lipgloss.NewStyle()
 )
 
 // border-style
 var (
-	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cRed)).Render
-	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cBlue)).Render
-	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).Render
+	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cRed))
+	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cBlue))
+	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
 )
 
 func PreviewStyles() string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "\n%s\n%s\n%s",
-		bsError("\tERROR\t"),
-		bsFocus("\tFOCUS\t"),
-		bsUnfocus("\tUNFOCUS\t"),
+		bsError.Render("\tERROR\t"),
+		bsFocus.Render("\tFOCUS\t"),
+		bsUnfocus.Render("\tUNFOCUS\t"),
 	)
 	fmt.Fprintf(&b, "\n\n%s%s%s",
-		tsHelp("\tHELP\t"),
-		tsHighlight("\tHIGHLIGHT\t"),
-		tsNormal("\tNORMAL\t"),
+		tsHelp.Render("\tHELP\t"),
+		tsHighlight.Render("\tHIGHLIGHT\t"),
+		tsNormal.Render("\tNORMAL\t"),
 	)
 	return b.String()
 }

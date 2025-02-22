@@ -9,31 +9,43 @@ const (
 )
 
 func (m model) View() string {
-	return lipgloss.JoinVertical(
-		lipgloss.Top,
-		m.renderInputField(),
-		m.renderContentView(),
-		m.renderHelpText(),
-	)
+	switch m.state {
+	case stateWorking:
+		s := []string{m.renderInputField(), m.renderContentView(), m.renderHelpText()}
+		return lipgloss.JoinVertical(lipgloss.Top, s...)
+	case stateQuiting:
+		return m.renderQuitBox()
+	default:
+		return ""
+	}
 }
 
 func (m model) renderInputField() string {
 	if m.err != nil {
-		return bsError(m.input.View())
+		return bsError.Render(m.input.View())
 	}
 	if m.focus == focusInput {
-		return bsFocus(m.input.View())
+		return bsFocus.Render(m.input.View())
 	}
-	return bsUnfocus(m.input.View())
+	return bsUnfocus.Render(m.input.View())
 }
 
 func (m model) renderContentView() string {
 	if m.focus == focusContent {
-		return bsFocus(m.viewport.View())
+		return bsFocus.Render(m.viewport.View())
 	}
-	return bsUnfocus(m.viewport.View())
+	return bsUnfocus.Render(m.viewport.View())
 }
 
 func (m model) renderHelpText() string {
-	return tsHelp(helpText)
+	return tsHelp.Render(helpText)
+}
+
+func (m model) renderQuitBox() string {
+	question := "Do you really want to quit? [y/N]"
+	dialog := bsError.Padding(1, 4).Render(question)
+	if w, h := lipgloss.Size(dialog); m.width < w || m.height < h {
+		return question
+	}
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, dialog)
 }
