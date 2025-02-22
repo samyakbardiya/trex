@@ -32,12 +32,3 @@ func GetFilePath(path string) (string, error) {
 	log.Println("filepath:", absPath)
 	return absPath, nil
 }
-
-// func ReadFile(filePath string, ok bool) ([]byte, error) {
-func ReadFile(filePath string) ([]byte, error) {
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file %w", err)
-	}
-	return data, nil
-}
