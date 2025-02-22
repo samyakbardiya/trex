@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"time"
-
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -10,13 +8,12 @@ import (
 )
 
 type (
-	SessionState uint
-	ErrMsg       error
+	CurrFocus uint
+	ErrMsg    error
 )
 
 const (
-	DefaultTime              = time.Minute
-	TextInput   SessionState = iota
+	TextInput CurrFocus = iota
 	ContentView
 )
 
@@ -35,34 +32,35 @@ var (
 	helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
 )
 
-type MainModel struct {
-	state     SessionState
-	textInput textinput.Model
+type Model struct {
+	state     CurrFocus
 	err       error
-	viewport  viewport.Model
 	content   string
+	expr      string
+	textInput textinput.Model
+	viewport  viewport.Model
 }
 
-func InitialModel(timeout time.Duration, content string) MainModel {
-
+func InitialModel(content string) Model {
 	ti := textinput.New()
 	ti.Placeholder = "Pikachu"
-	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
+	ti.Focus()
 
-	return MainModel{
+	return Model{
 		textInput: ti,
+		state:     TextInput,
 		err:       nil,
 		content:   string(content),
 	}
 }
 
-func (m MainModel) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return tea.Batch(textinput.Blink)
 }
 
-func (m MainModel) currentFocusedModel() string {
+func (m Model) currentFocusedModel() string {
 	if m.state == TextInput {
 		return "textInput"
 	}

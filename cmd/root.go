@@ -57,7 +57,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 func run(cmd *cobra.Command, args []string) error {
 	file, ok := cmd.Context().Value(util.KeyFileData).([]byte)
 	if !ok {
-		panic("Unable to read the content")
+		return fmt.Errorf("unable to read content")
 	}
 
 	// NOTE: usage example
@@ -69,7 +69,7 @@ func run(cmd *cobra.Command, args []string) error {
 	// }
 	// log.Println("re", re)
 
-	p := tea.NewProgram(ui.InitialModel(ui.DefaultTime, string(file)), tea.WithAltScreen(), tea.WithMouseCellMotion())
+	p := tea.NewProgram(ui.InitialModel(string(file)), tea.WithAltScreen(), tea.WithMouseCellMotion())
 	if _, err := p.Run(); err != nil {
 		return fmt.Errorf("error while running program: %w", err)
 	}
