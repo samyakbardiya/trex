@@ -58,3 +58,5 @@ Before you begin, ensure you have the following installed:
 
 - [Samyak Bardiya](https://links.samyakbardiya.dev)
 - [Mital Sapkale](https://github.com/mitalrs)
+
+![Example](/tmp/termtosvg_hrxjfojc.svg)
