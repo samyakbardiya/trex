@@ -1,13 +1,31 @@
 # TReX
 
-**TReX** is a TUI (Text User Interface) tool designed for writing and
-visualizing Regular Expressions (RegEx). Developed in Go, TReX features a
+**TReX** is a TUI (Text User Interface) tool designed for writing, visualizing
+and testing Regular Expressions (RegEx). Developed in Go, TReX features a
 keyboard-driven interface that allows users to create and test RegEx patterns
 effectively.
 
 <!-- TODO: Add gif/video -->
 <!-- @see https://github.com/icholy/ttygif -->
 <!-- @see https://asciinema.org/ -->
+
+<!-- toc -->
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Roadmap](#roadmap)
+- [Authors](#authors)
+
+<!-- tocstop -->
+
+## Features
+
+- Written in Go, for efficient performance
+- Capability to load external files for testing purposes
+- Keyboard-driven interface, so that you don't need to use a mouse :)
+- Mouse-support for those who still want to use it
 
 ## Prerequisites
 
@@ -29,6 +47,12 @@ Before you begin, ensure you have the following installed:
   ```sh
   go install
   go build
+  ```
+
+- **Optionally, you can copy the binary to your PATH:**
+
+  ```sh
+  cp ./trex ~/.local/bin
   ```
 
 - **Verify the installation:**
@@ -53,6 +77,13 @@ Before you begin, ensure you have the following installed:
   ```
 
 ## Roadmap
+
+- Editable text area instead of read-only view
+- Pre-defined templates, for popular use-cases, like email-validation,
+  url-validation, etc.
+- Local history, similar to your shell history, which can be navigated via
+  up & down arrow key
+- Syntax highlighting for the RegEx input.
 
 ## Authors
 
