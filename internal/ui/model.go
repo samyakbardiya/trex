@@ -140,7 +140,7 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	if d.focus == focusCheatsheet && index == m.Index() {
 		style = tsListSelected
 	}
-	fmt.Fprint(w, style.Width(width).MaxWidth(width).Render(str...))
+	fmt.Fprint(w, style.MaxWidth(width).Render(str...))
 }
 
 type model struct {
