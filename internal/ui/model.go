@@ -133,7 +133,7 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 
 	description := tsCheatsheetDescription.Render(i.description)
 	pattern := tsCheatsheetPattern.Render(fmt.Sprintf(" %4s ", i.pattern))
-	str := []string{description, pattern}
+	str := []string{pattern, description}
 
 	width := m.Width()
 	style := tsListDefault

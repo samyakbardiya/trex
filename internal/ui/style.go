@@ -46,9 +46,9 @@ var (
 	tsHelp                  = lipgloss.NewStyle().Foreground(cGray)
 	tsHighlight             = lipgloss.NewStyle().Foreground(cBlack).Background(cGreen).Bold(true)
 	tsNormal                = lipgloss.NewStyle()
-	tsCheatsheetDescription = tsNormal
+	tsCheatsheetDescription = lipgloss.NewStyle()
 	tsCheatsheetPattern     = lipgloss.NewStyle().Foreground(cYellow)
-	tsListDefault           = tsNormal.UnsetReverse().UnsetBold()
+	tsListDefault           = lipgloss.NewStyle()
 	tsListSelected          = lipgloss.NewStyle().Reverse(true).Bold(true)
 )
 
