@@ -13,7 +13,7 @@ const (
 )
 
 func (m model) View() string {
-	if m.width < minWidth {
+	if m.width < minWidth || m.height < minHeight {
 		return m.renderBox("Window too small!\nPlease resize.", bsError)
 	}
 
@@ -42,7 +42,7 @@ func (m model) View() string {
 }
 
 func (m model) renderInputField() string {
-	text := tsNormal.Render("> ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
+	text := tsNormal.Render("TReX => ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
 	style := bsUnfocus
 	if m.err != nil {
 		style = bsError

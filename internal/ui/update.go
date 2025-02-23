@@ -52,8 +52,7 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.viewport, cmd = m.viewport.Update(msg)
 		return m, cmd
 	case focusCheatsheet:
-		m.cheatsheet, cmd = m.cheatsheet.Update(msg)
-		return m, cmd
+		return m.handleCheatsheetKeyMsg(msg)
 	}
 
 	return m, nil
@@ -76,8 +75,15 @@ func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 
 func (m model) handleMouseMsg(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+	var cmds []tea.Cmd
+
 	m.viewport, cmd = m.viewport.Update(msg)
-	return m, cmd
+	cmds = append(cmds, cmd)
+
+	m.cheatsheet, cmd = m.cheatsheet.Update(msg)
+	cmds = append(cmds, cmd)
+
+	return m, tea.Batch(cmds...)
 }
 
 func (m model) handleTickMsg() (tea.Model, tea.Cmd) {
@@ -88,7 +94,7 @@ func (m model) handleTickMsg() (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m *model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.input, cmd = m.input.Update(msg)
 
@@ -102,6 +108,34 @@ func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	default:
 		if m.matchRes.Pattern != m.input.Value() {
 			m.matchRes.Pattern = m.input.Value()
+			m.updateRegexMatches()
+		}
+	}
+
+	return m, cmd
+}
+
+func (m *model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.cheatsheet, cmd = m.cheatsheet.Update(msg)
+
+	switch msg.Type {
+	case tea.KeyEnter:
+		i := m.cheatsheet.Index()
+		items := m.cheatsheet.Items()
+		inValue := m.input.Value()
+
+		if selected, ok := items[i].(item); ok {
+			switch selected.itemType {
+			case itemCheatcode:
+				m.matchRes.Pattern = inValue + selected.pattern
+				m.input.SetValue(m.matchRes.Pattern)
+			case itemTemplate:
+				m.matchRes.Pattern = selected.pattern
+				m.matchRes.InputText = selected.testStr
+				m.input.SetValue(m.matchRes.Pattern)
+				m.viewport.SetContent(m.matchRes.InputText)
+			}
 			m.updateRegexMatches()
 		}
 	}
