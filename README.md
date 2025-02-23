@@ -1,9 +1,12 @@
 # TReX
 
-**TReX** is a Text User Interface (TUI) tool for writing, visualizing, and
-testing Regular Expressions (RegEx). This terminal-based application uses a
-keyboard-driven interface to allow users to create and evaluate RegEx patterns
-efficiently.
+**TReX** is a terminal-based tool for writing, visualizing, and testing Regular
+Expressions. Designed for efficiency, it provides a keyboard-driven interface
+for rapid feedback on your regex experiments—all within your terminal.
+
+[![asciicast](https://asciinema.org/a/704948.svg)](https://asciinema.org/a/704948)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/samyakbardiya/trex)](https://goreportcard.com/report/github.com/samyakbardiya/trex) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) [![GitHub release](https://img.shields.io/github/v/release/samyakbardiya/trex)](https://github.com/samyakbardiya/trex/releases)
 
 <!-- toc -->
 
@@ -14,32 +17,37 @@ efficiently.
   * [Steps](#steps)
 - [Usage](#usage)
 - [Roadmap](#roadmap)
+- [Contributing](#contributing)
 - [Implementation](#implementation)
-- [Authors](#authors)
 
 <!-- tocstop -->
 
 ## Why TReX?
 
-**T** from the TUI and **REX** from the **RegEx**, hence the TReX, :t-rex: roar!
+[![xkcd comic about Regular Expressions](https://imgs.xkcd.com/comics/regular_expressions.png)](https://xkcd.com/208)
 
-Because sometimes you just want to quickly test out a regex without fussing
-through multiple browser tabs and searching for the right online tool. TReX was
-created to let you see exactly how your regex interacts with your string—in one
-simple, elegant terminal application.
+Sometimes you just want to quickly test out a regex without switching between
+multiple browser tabs or online tools. TReX lets you see how your regex
+interacts with your text in real time—all within your terminal.
+
+- **Quick feedback:** Validate and debug regex patterns instantly.
+- **Integrated testing:** Load files and experiment with regex combinations.
+- **Efficient workflow:** Stay in your terminal and keep your focus on writing code.
+
+Btw, `T` is from **T**UI and `ReX` from **R**eg**Ex**, hence **_TReX_**. :t-rex: roar!
 
 ## Features
 
-- Written in Go, for efficient performance
-- Capability to load external files for testing purposes
-- Keyboard-driven interface, so that you don't need to use a mouse :)
-- Mouse-support for those who still want to use it
+- **Written in Go:** Fast and portable.
+- **External file loading:** Test regex patterns against real-world data.
+- **Keyboard-driven interface:** Navigate without the need for a mouse.
+- **Mouse support:** For users who prefer it or need it.
 
 ## Installation
 
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
+Make sure you have the following installed:
 
 - [Go](https://go.dev/)
 
@@ -59,50 +67,71 @@ Before you begin, ensure you have the following installed:
   go build
   ```
 
-- **Optionally, you can copy the binary to your PATH:**
+  - **_Optionally_, you can copy the binary to your `PATH`:**
 
-  ```sh
-  cp ./trex ~/.local/bin
-  ```
+    ```sh
+    cp ./trex ~/.local/bin
+    ```
 
 - **Verify the installation:**
 
   ```sh
-  ./trex --help
   ./trex --version
   ```
 
 ## Usage
 
-- To start TReX:
+- **Start TReX:**
 
   ```sh
   trex
   ```
 
-- To load a file into TReX:
+- **Load a file into TReX:**
 
   ```sh
   trex file.txt
   ```
 
+- **Advanced usage:** Check out the help flag for more commands:
+
+  ```sh
+  trex --help
+  ```
+
 ## Roadmap
 
-- Editable text area instead of read-only view
-- Local history, similar to your shell history, which can be navigated via
-  up & down arrow key
-- Syntax highlighting for the RegEx input.
+- [ ] **Editable Text Area**: Replace the read-only view with an editable interface.
+- [ ] **Local History**: Implement local history similar to shell history,
+      navigable with arrow keys.
+- [ ] **Syntax Highlighting**: Add syntax highlighting for the RegEx input.
+- [ ] **Toggleable Flags**: Implement quick toggling for RegEx flags, such as:
+  - `g` (global)
+  - `m` (multi-line)
+  - `i` (case-insensitive)
+  - `U` (ungreedy)
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+For major changes, please open an issue first to discuss what you'd like to
+change.
 
 ## Implementation
 
-TReX is developed in **Go** and leverages the following libraries:
+Developed in Go, **TReX** leverages:
 
 - [Bubble Tea](https://github.com/charmbracelet/bubbletea) for building the TUI.
 - [Cobra](https://github.com/spf13/cobra) for command-line functionality.
-- [Lipgloss](https://github.com/charmbracelet/lipgloss) for styling the interface.
-- [Bubbles](https://github.com/charmbracelet/bubbles) for additional TUI utilities
+- [Lip Gloss](https://github.com/charmbracelet/lipgloss) for styling.
+- [Bubbles](https://github.com/charmbracelet/bubbles) for additional utilities
 
-## Authors
+---
 
-- [Samyak Bardiya](https://links.samyakbardiya.dev)
-- [Mital Sapkale](https://github.com/mitalrs)
+<p align="center">
+  Made during <a href="https://fossunited.org/fosshack/2025">FOSS HACK 2025</a> in India :india:
+</p>
+
+<p align="center">
+<sup>By <a href="https://links.samyakbardiya.dev">Samyak Bardiya</a> &amp; <a href="https://github.com/mitalrs">Mital Sapkale</a></sup>
+</p>
