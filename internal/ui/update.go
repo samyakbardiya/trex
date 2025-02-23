@@ -41,7 +41,7 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		default:
 			return m.toggleState()
 		}
-	case stateAlertClipboard:
+	case stateNotification:
 		return m, nil // blocks KeyMsg
 	}
 
@@ -73,7 +73,7 @@ func (m model) handleMouseMsg(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 
 func (m model) handleTickMsg() (tea.Model, tea.Cmd) {
 	switch m.state {
-	case stateAlertClipboard:
+	case stateNotification:
 		m.state = stateActive // resets state
 	}
 	return m, nil
@@ -87,8 +87,8 @@ func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case tea.KeyEnter:
 		if err := clipboard.Init(); err == nil {
 			clipboard.Write(clipboard.FmtText, []byte(m.matchRes.Pattern))
-			m.state = stateAlertClipboard
-			return m, tea.Batch(cmd, timeout(500*time.Millisecond))
+			m.state = stateNotification
+			return m, tea.Batch(cmd, timeout(1*time.Second))
 		}
 	default:
 		if m.matchRes.Pattern != m.input.Value() {

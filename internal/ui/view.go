@@ -17,7 +17,7 @@ func (m model) View() string {
 	case stateActive:
 		s := []string{m.renderInputField(), m.renderContentView(), m.renderHelpText()}
 		return lipgloss.JoinVertical(lipgloss.Top, s...)
-	case stateAlertClipboard:
+	case stateNotification:
 		return m.renderBox("RegEx copied to clipboard!", bsSuccess)
 	case stateExiting:
 		return m.renderBox("Do you really want to quit? [y/N]", bsError)
@@ -43,12 +43,16 @@ func (m model) renderContentView() string {
 	return bsUnfocus.Render(m.viewport.View())
 }
 
+func (m model) renderCentered(str string) string {
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, str)
+}
+
 func (m model) renderBox(message string, style lipgloss.Style) string {
 	box := style.Padding(1, 4).Render(message)
 	if w, _ := lipgloss.Size(box); m.width < w {
-		return lipgloss.NewStyle().Width(m.width).Render(message)
+		return m.renderCentered(lipgloss.NewStyle().Width(m.width).Render(message))
 	}
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, box)
+	return m.renderCentered(box)
 }
 
 func (m model) renderHelpText() string {

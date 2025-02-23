@@ -20,7 +20,7 @@ type state uint
 
 const (
 	stateActive state = iota
-	stateAlertClipboard
+	stateNotification
 	stateExiting
 )
 
