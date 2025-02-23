@@ -11,7 +11,7 @@ type MatchResult struct {
 	InputText   string  // input text to be matched
 	Highlighted string  // highlighted match result
 	Pattern     string  // regex pattern used for matching
-	Matches     [][]int // positions of teh matches found
+	Matches     [][]int // positions of the matches found
 }
 
 func (mr *MatchResult) FindMatches() error {
@@ -20,7 +20,7 @@ func (mr *MatchResult) FindMatches() error {
 	}
 
 	// TODO: implment customizable flags
-	re, err := regexp.Compile("(?m)" + mr.Pattern)
+	re, err := regexp.Compile(mr.Pattern)
 	if err != nil {
 		return fmt.Errorf("invalid regular expression: %q: %w", mr.Pattern, err)
 	}

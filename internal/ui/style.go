@@ -9,40 +9,52 @@ import (
 )
 
 const (
-	cBlack       = "0"
-	cGreen       = "2"
-	cGray        = "8"
-	cRed         = "9"
-	cBlue        = "12"
-	colorsPerRow = 8
-	maxColors    = 16
+	cBlack        = "0"
+	cRed          = "1"
+	cGreen        = "2"
+	cYellow       = "3"
+	cBlue         = "4"
+	cMagenta      = "5"
+	cCyan         = "6"
+	cLightGray    = "7"
+	cDarkGray     = "8"
+	cLightRed     = "9"
+	cLightGreen   = "10"
+	cLightYellow  = "11"
+	cLightBlue    = "12"
+	cLightMagenta = "13"
+	cLightCyan    = "14"
+	cWhite        = "15"
+	colorsPerRow  = 8
+	maxColors     = 16
 )
 
 // text-style
 var (
-	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cGray)).Render
-	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true).Render
-	tsNormal    = lipgloss.NewStyle().Render
+	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cLightGray))
+	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true)
+	tsNormal    = lipgloss.NewStyle()
 )
 
 // border-style
 var (
-	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cRed)).Render
-	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cBlue)).Render
-	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).Render
+	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cLightRed))
+	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cLightBlue))
+	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
+	bsSuccess = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cLightGreen))
 )
 
 func PreviewStyles() string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "\n%s\n%s\n%s",
-		bsError("\tERROR\t"),
-		bsFocus("\tFOCUS\t"),
-		bsUnfocus("\tUNFOCUS\t"),
+		bsError.Render("\tERROR\t"),
+		bsFocus.Render("\tFOCUS\t"),
+		bsUnfocus.Render("\tUNFOCUS\t"),
 	)
 	fmt.Fprintf(&b, "\n\n%s%s%s",
-		tsHelp("\tHELP\t"),
-		tsHighlight("\tHIGHLIGHT\t"),
-		tsNormal("\tNORMAL\t"),
+		tsHelp.Render("\tHELP\t"),
+		tsHighlight.Render("\tHIGHLIGHT\t"),
+		tsNormal.Render("\tNORMAL\t"),
 	)
 	return b.String()
 }
