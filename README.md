@@ -6,7 +6,20 @@ for rapid feedback on your regex experiments—all within your terminal.
 
 [![asciicast](https://asciinema.org/a/704948.svg)](https://asciinema.org/a/704948)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/samyakbardiya/trex)](https://goreportcard.com/report/github.com/samyakbardiya/trex) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) [![GitHub release](https://img.shields.io/github/v/release/samyakbardiya/trex)](https://github.com/samyakbardiya/trex/releases)
+<p align="center">
+  <a href="https://github.com/samyakbardiya/trex">
+    <img src="https://img.shields.io/github/go-mod/go-version/samyakbardiya/trex" alt="GitHub go.mod Go version">
+  </a>
+  <a href="https://goreportcard.com/report/github.com/samyakbardiya/trex">
+    <img src="https://goreportcard.com/badge/github.com/samyakbardiya/trex" alt="Go Report Card">
+  </a>
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+  </a>
+  <a href="https://github.com/samyakbardiya/trex/releases">
+    <img src="https://img.shields.io/github/v/release/samyakbardiya/trex?include_prereleases" alt="GitHub Release">
+  </a>
+</p>
 
 <!-- toc -->
 
@@ -34,7 +47,8 @@ interacts with your text in real time—all within your terminal.
 - **Integrated testing:** Load files and experiment with regex combinations.
 - **Efficient workflow:** Stay in your terminal and keep your focus on writing code.
 
-Btw, `T` is from **T**UI and `ReX` from **R**eg**Ex**, hence **_TReX_**. :t-rex: roar!
+Btw, `T` is from **T**UI and `ReX` from **R**eg**Ex**, hence **_TReX_**.
+:t-rex: roar!
 
 ## Features
 
