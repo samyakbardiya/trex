@@ -7,6 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wordwrap"
 )
 
 const (
@@ -59,6 +60,7 @@ func (m model) renderBox(message string, style lipgloss.Style) string {
 }
 
 func (m model) renderHelpText() string {
+	
 	var focusSpecificKeyBindings []keyBinding
 	switch m.focus {
 	case focusInput:
@@ -84,5 +86,7 @@ func (m model) renderHelpText() string {
 	for _, kb := range keyBinding {
 		keyMap = append(keyMap, fmt.Sprintf("%s: <%s>", kb.description, kb.binding))
 	}
-	return tsHelp.Render(strings.Join(keyMap, " | "))
+	keyMapStr := tsHelp.Render(strings.Join(keyMap, " | "))
+	wrappedKeyMap := wordwrap.String(keyMapStr, int(m.width-2))
+	return lipgloss.Place(m.width, 1, lipgloss.Center, lipgloss.Center, wrappedKeyMap)
 }
