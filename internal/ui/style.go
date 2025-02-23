@@ -38,10 +38,10 @@ var (
 
 // border-style
 var (
-	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cRed))
-	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cBlue))
+	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cLightRed))
+	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cLightBlue))
 	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
-	bsSuccess = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cGreen))
+	bsSuccess = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cLightGreen))
 )
 
 func PreviewStyles() string {

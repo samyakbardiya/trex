@@ -15,7 +15,7 @@ const (
 	focusContent
 )
 
-// state represents the of the application
+// state represents the current state of the application
 type state uint
 
 const (
@@ -24,11 +24,12 @@ const (
 	stateExiting
 )
 
+// tickMsg represents a tick event in the application
 type tickMsg struct{}
 
 type keyBinding struct {
-	description string
-	binding     string
+	description string // description provides a human-readable explanation of the binding
+	binding     string // binding represents the key sequence for this binding
 }
 
 type model struct {
@@ -39,7 +40,7 @@ type model struct {
 	viewport viewport.Model   // model for handling content
 	width    int              // width of the window
 	height   int              // height of the window
-	time     tickMsg          //
+	time     tickMsg          // tracks tick events for state transitions
 	err      error            // any error encountered during application execution
 }
 
