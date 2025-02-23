@@ -14,10 +14,10 @@ const (
 	minWidth        = 80
 	minHeight       = 24
 	leftWidthRatio  = 0.70
-	rightWidthRatio = 0.20
+	rightWidthRatio = 0.30
 	minInputHeight  = 4
 	minHelpHeight   = 2
-	borderWidthDiff = 4  // 2*2 |#||#|
+	borderWidthDiff = 2  // self border
 	widthDiff       = 20 // offset caused by the borders
 	widthCheatsheet = 30 // width of the cheatsheet
 )
@@ -46,10 +46,10 @@ var (
 	tsHelp                  = lipgloss.NewStyle().Foreground(cGray)
 	tsHighlight             = lipgloss.NewStyle().Foreground(cBlack).Background(cGreen).Bold(true)
 	tsNormal                = lipgloss.NewStyle()
-	tsCheatsheetDescription = tsNormal.AlignHorizontal(lipgloss.Left)
-	tsCheatsheetPattern     = lipgloss.NewStyle().Foreground(cYellow).AlignHorizontal(lipgloss.Right)
-	tsListDefault           = tsNormal.Padding(0, 1)
-	tsListSelected          = lipgloss.NewStyle().Padding(0, 1).Reverse(true).Bold(true)
+	tsCheatsheetDescription = tsNormal
+	tsCheatsheetPattern     = lipgloss.NewStyle().Foreground(cYellow)
+	tsListDefault           = tsNormal.UnsetReverse().UnsetBold()
+	tsListSelected          = lipgloss.NewStyle().Reverse(true).Bold(true)
 )
 
 // border-style

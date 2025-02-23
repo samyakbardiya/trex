@@ -63,10 +63,12 @@ func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 	m.width = msg.Width
 	m.height = msg.Height
 
-	m.viewport.Width = int(float32(m.width) * leftWidthRatio)
+	maxViewportWidth := int(float32(m.width)*leftWidthRatio) - borderWidthDiff
+	m.viewport.Width = maxViewportWidth
 	m.viewport.Height = m.height - minHelpHeight - minInputHeight
 
-	m.cheatsheet.SetWidth(int(float32(m.width) * rightWidthRatio))
+	maxCheatsheetWidth := int(float32(m.width)*rightWidthRatio) - borderWidthDiff
+	m.cheatsheet.SetWidth(maxCheatsheetWidth)
 	m.cheatsheet.SetHeight(m.height - minHelpHeight - 1)
 
 	return m, nil
@@ -116,16 +118,19 @@ func (m *model) updateRegexMatches() {
 }
 
 func (m *model) getNextFocus() (tea.Model, tea.Cmd) {
+	var nextFocus focus
 	switch m.focus {
 	case focusInput:
-		m.focus = focusContent
+		nextFocus = focusContent
 	case focusContent:
-		m.focus = focusCheatsheet
+		nextFocus = focusCheatsheet
 	case focusCheatsheet:
-		m.focus = focusInput
+		nextFocus = focusInput
 	default:
-		m.focus = focusInput
+		nextFocus = focusInput
 	}
+	m.focus = nextFocus
+	m.cheatsheet.SetDelegate(itemDelegate{focus: nextFocus})
 	return m, nil
 }
 

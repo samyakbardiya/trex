@@ -3,14 +3,11 @@ package ui
 import (
 	"fmt"
 	"io"
-	"log"
-	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/samyakbardiya/trex/internal/util"
 )
 
@@ -121,7 +118,9 @@ var items = []list.Item{
 	item{description: "Insert a form-feed", pattern: "\\f"},
 }
 
-type itemDelegate struct{}
+type itemDelegate struct {
+	focus focus
+}
 
 func (d itemDelegate) Height() int                             { return 1 }
 func (d itemDelegate) Spacing() int                            { return 0 }
@@ -131,21 +130,17 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	if !ok {
 		return
 	}
-	description := tsCheatsheetDescription.Render(i.description)
-	pattern := tsCheatsheetPattern.Render(i.pattern)
-	padding := widthCheatsheet - lipgloss.Width(description) - lipgloss.Width(pattern)
-	log.Println(i, padding)
-	if padding < 0 {
-		padding = 0
-	}
-	spacer := strings.Repeat(" ", padding)
-	str := description + spacer + pattern
 
-	fn := tsListDefault.Render
-	if index == m.Index() {
-		fn = tsListSelected.Render
+	description := tsCheatsheetDescription.Render(i.description)
+	pattern := tsCheatsheetPattern.Render(fmt.Sprintf(" %4s ", i.pattern))
+	str := []string{description, pattern}
+
+	width := m.Width()
+	style := tsListDefault
+	if d.focus == focusCheatsheet && index == m.Index() {
+		style = tsListSelected
 	}
-	fmt.Fprint(w, fn(str))
+	fmt.Fprint(w, style.Width(width).MaxWidth(width).Render(str...))
 }
 
 type model struct {
@@ -167,9 +162,10 @@ func New(initialContent string) model {
 	in.Prompt = ""
 	in.Focus()
 
-	ch := list.New(items, itemDelegate{}, minWidth*rightWidthRatio, 48)
+	ch := list.New(items, itemDelegate{focus: focusInput}, minWidth*rightWidthRatio, 48)
 	ch.SetFilteringEnabled(false)
 	ch.SetShowFilter(false)
+	ch.SetShowHelp(false)
 	ch.SetShowStatusBar(false)
 	ch.SetShowTitle(false)
 	ch.Styles.PaginationStyle = tsNormal
