@@ -19,9 +19,12 @@ const (
 type state uint
 
 const (
-	stateWorking state = iota
-	stateQuiting
+	stateActive state = iota
+	stateAlertClipboard
+	stateExiting
 )
+
+type tickMsg struct{}
 
 type model struct {
 	state    state            // current state of the application
@@ -31,6 +34,7 @@ type model struct {
 	viewport viewport.Model   // model for handling content
 	width    int              // width of the window
 	height   int              // height of the window
+	time     tickMsg          //
 	err      error            // any error encountered during application execution
 }
 
@@ -40,7 +44,7 @@ func New(initialContent string) model {
 	input.Focus()
 
 	return model{
-		state: stateWorking,
+		state: stateActive,
 		focus: focusInput,
 		matchRes: util.MatchResult{
 			InputText:   initialContent,

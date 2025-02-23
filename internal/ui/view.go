@@ -10,11 +10,13 @@ const (
 
 func (m model) View() string {
 	switch m.state {
-	case stateWorking:
+	case stateActive:
 		s := []string{m.renderInputField(), m.renderContentView(), m.renderHelpText()}
 		return lipgloss.JoinVertical(lipgloss.Top, s...)
-	case stateQuiting:
-		return m.renderQuitBox()
+	case stateAlertClipboard:
+		return m.renderSuccessBox("RegEx copied to clipboard!")
+	case stateExiting:
+		return m.renderErrorBox("Do you really want to quit? [y/N]")
 	default:
 		return ""
 	}
@@ -41,11 +43,18 @@ func (m model) renderHelpText() string {
 	return tsHelp.Render(helpText)
 }
 
-func (m model) renderQuitBox() string {
-	question := "Do you really want to quit? [y/N]"
-	dialog := bsError.Padding(1, 4).Render(question)
-	if w, h := lipgloss.Size(dialog); m.width < w || m.height < h {
-		return question
+func (m model) renderErrorBox(message string) string {
+	box := bsError.Padding(1, 4).Render(message)
+	if w, h := lipgloss.Size(box); m.width < w || m.height < h {
+		return lipgloss.NewStyle().Width(m.width).Render(message)
 	}
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, dialog)
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, box)
+}
+
+func (m model) renderSuccessBox(message string) string {
+	box := bsSuccess.Padding(1, 4).Render(message)
+	if w, h := lipgloss.Size(box); m.width < w || m.height < h {
+		return lipgloss.NewStyle().Width(m.width).Render(message)
+	}
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, box)
 }

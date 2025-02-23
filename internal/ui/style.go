@@ -9,18 +9,29 @@ import (
 )
 
 const (
-	cBlack       = "0"
-	cGreen       = "2"
-	cGray        = "8"
-	cRed         = "9"
-	cBlue        = "12"
-	colorsPerRow = 8
-	maxColors    = 16
+	cBlack        = "0"
+	cRed          = "1"
+	cGreen        = "2"
+	cYellow       = "3"
+	cBlue         = "4"
+	cMagenta      = "5"
+	cCyan         = "6"
+	cLightGray    = "7"
+	cDarkGray     = "8"
+	cLightRed     = "9"
+	cLightGreen   = "10"
+	cLightYellow  = "11"
+	cLightBlue    = "12"
+	cLightMagenta = "13"
+	cLightCyan    = "14"
+	cWhite        = "15"
+	colorsPerRow  = 8
+	maxColors     = 16
 )
 
 // text-style
 var (
-	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cGray))
+	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cLightGray))
 	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true)
 	tsNormal    = lipgloss.NewStyle()
 )
@@ -30,6 +41,7 @@ var (
 	bsError   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cRed))
 	bsFocus   = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cBlue))
 	bsUnfocus = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
+	bsSuccess = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(cGreen))
 )
 
 func PreviewStyles() string {
