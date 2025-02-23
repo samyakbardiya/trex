@@ -1,6 +1,10 @@
 package ui
 
 import (
+	"fmt"
+	"strings"
+
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -39,10 +43,6 @@ func (m model) renderContentView() string {
 	return bsUnfocus.Render(m.viewport.View())
 }
 
-func (m model) renderHelpText() string {
-	return tsHelp.Render(helpText)
-}
-
 func (m model) renderErrorBox(message string) string {
 	box := bsError.Padding(1, 4).Render(message)
 	if w, h := lipgloss.Size(box); m.width < w || m.height < h {
@@ -57,4 +57,37 @@ func (m model) renderSuccessBox(message string) string {
 		return lipgloss.NewStyle().Width(m.width).Render(message)
 	}
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, box)
+}
+
+func (m model) renderHelpText() string {
+	var focusSpecificKeyBindings []keyBinding
+	switch m.focus {
+	case focusInput:
+		focusSpecificKeyBindings = []keyBinding{
+			{description: "Clear", binding: tea.KeyCtrlW.String()},
+			{description: "Copy RegEx", binding: tea.KeyEnter.String()},
+		}
+	case focusContent:
+		focusSpecificKeyBindings = []keyBinding{
+			{description: "Scroll Up", binding: tea.KeyUp.String()},
+			{description: "Scroll Down", binding: tea.KeyDown.String()},
+		}
+	}
+
+	baseKeyBindings := []keyBinding{
+		{description: "Focus Next", binding: tea.KeyTab.String()},
+		{description: "Quit", binding: "q"},
+		{description: "Force Quit", binding: tea.KeyCtrlC.String()},
+	}
+	keyBinding := append(focusSpecificKeyBindings, baseKeyBindings...)
+
+	var sb strings.Builder
+	for i, kb := range keyBinding {
+		fmt.Fprintf(&sb, "%s: <%s>", kb.description, kb.binding)
+		if i < len(keyBinding)-1 {
+			sb.WriteString(" | ")
+		}
+	}
+
+	return tsHelp.Render(sb.String())
 }

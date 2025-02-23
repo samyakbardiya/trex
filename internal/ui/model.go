@@ -26,6 +26,11 @@ const (
 
 type tickMsg struct{}
 
+type keyBinding struct {
+	description string
+	binding     string
+}
+
 type model struct {
 	state    state            // current state of the application
 	focus    focus            // current focus of the UI
