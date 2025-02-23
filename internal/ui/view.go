@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -27,13 +28,15 @@ func (m model) View() string {
 }
 
 func (m model) renderInputField() string {
+	inputText := tsNormal.Render("> ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
 	if m.err != nil {
-		return bsError.Render(m.input.View())
+		log.Print("error:", m.err)
+		return bsError.Width(m.width - 4).Render(inputText)
 	}
 	if m.focus == focusInput {
-		return bsFocus.Render(m.input.View())
+		return bsFocus.Width(m.width - 4).Render(inputText)
 	}
-	return bsUnfocus.Render(m.input.View())
+	return bsUnfocus.Width(m.width - 4).Render(inputText)
 }
 
 func (m model) renderContentView() string {
