@@ -4,65 +4,41 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/samyakbardiya/trex/internal/util"
 )
 
-type (
-	CurrFocus uint
-	ErrMsg    error
-)
+// focus represents the current focus state of the UI.
+type focus uint
 
 const (
-	TextInput CurrFocus = iota
-	ContentView
+	focusInput focus = iota
+	focusContent
 )
 
-var (
-	modelStyle = lipgloss.NewStyle().
-			Width(80).
-			Height(5).
-			Align(lipgloss.Center, lipgloss.Center).
-			BorderStyle(lipgloss.HiddenBorder())
-	focusedModelStyle = lipgloss.NewStyle().
-				Width(80).
-				Height(5).
-				Align(lipgloss.Center, lipgloss.Center).
-				BorderStyle(lipgloss.NormalBorder()).
-				BorderForeground(lipgloss.Color("69"))
-	helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
-)
-
-type Model struct {
-	state     CurrFocus
-	err       error
-	content   string
-	expr      string
-	textInput textinput.Model
-	viewport  viewport.Model
+type model struct {
+	focus    focus            // current focus
+	matchRes util.MatchResult // result of the regex matching
+	input    textinput.Model
+	viewport viewport.Model
+	err      error
 }
 
-func InitialModel(content string) Model {
-	ti := textinput.New()
-	ti.Placeholder = "Pikachu"
-	ti.CharLimit = 156
-	ti.Width = 20
-	ti.Focus()
+func New(initialContent string) model {
+	input := textinput.New()
+	input.Placeholder = "RegEx"
+	input.Focus()
 
-	return Model{
-		textInput: ti,
-		state:     TextInput,
-		err:       nil,
-		content:   string(content),
+	return model{
+		input: input,
+		focus: focusInput,
+		matchRes: util.MatchResult{
+			InputText:   initialContent,
+			Highlighted: initialContent,
+		},
+		err: nil,
 	}
 }
 
-func (m Model) Init() tea.Cmd {
-	return tea.Batch(textinput.Blink)
-}
-
-func (m Model) currentFocusedModel() string {
-	if m.state == TextInput {
-		return "textInput"
-	}
-	return "content"
+func (m model) Init() tea.Cmd {
+	return textinput.Blink
 }

@@ -1,56 +1,82 @@
 package ui
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	var cmds []tea.Cmd
-
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-
-	// TODO: Handle Error
-	case ErrMsg:
-		m.err = msg
-		return m, nil
-
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
-			return m, tea.Quit
-		case "tab":
-			// update whichever model is focused
-			switch m.state {
-			case TextInput:
-				m.state = ContentView
-			case ContentView:
-				m.state = TextInput
-			default:
-				m.err = fmt.Errorf("invalid state")
-			}
-		}
-
-		// pass KeyMsg to the focused-box
-		switch m.state {
-		case TextInput:
-			m.textInput, cmd = m.textInput.Update(msg)
-			cmds = append(cmds, cmd)
-		case ContentView:
-			m.viewport, cmd = m.viewport.Update(msg)
-			cmds = append(cmds, cmd)
-		}
-
+		return m.handleKeyMsg(msg)
 	case tea.WindowSizeMsg:
-		customWidth := msg.Width - 2
-		customHeight := msg.Height - 15
+		return m.handleWindowSizeMsg(msg)
+	case tea.MouseMsg:
+		return m.handleMouseMsg(msg)
+	default:
+		return m, nil
+	}
+}
 
-		m.viewport = viewport.New(customWidth, customHeight)
-		m.viewport.SetContent(m.content)
+func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.Type {
+	case tea.KeyEsc, tea.KeyCtrlC:
+		return m, tea.Quit
+	case tea.KeyTab:
+		m.focus = m.getNextFocus()
 	}
 
-	return m, tea.Batch(cmds...)
+	var cmd tea.Cmd
+	switch m.focus {
+	case focusInput:
+		return m.handleInputUpdate(msg)
+	case focusContent:
+		m.viewport, cmd = m.viewport.Update(msg)
+		return m, cmd
+	}
+
+	return m, nil
+}
+
+func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
+	m.viewport = viewport.New(msg.Width-4, msg.Height-8)
+	m.viewport.SetContent(m.matchRes.Highlighted)
+	return m, nil
+}
+
+func (m model) handleMouseMsg(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.viewport, cmd = m.viewport.Update(msg)
+	return m, cmd
+}
+
+func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.input, cmd = m.input.Update(msg)
+
+	if m.matchRes.Pattern != m.input.Value() {
+		m.matchRes.Pattern = m.input.Value()
+		m.updateRegexMatches()
+	}
+
+	return m, cmd
+}
+
+func (m *model) updateRegexMatches() {
+	if m.err = m.matchRes.FindMatches(); m.err != nil {
+		return
+	}
+	m.matchRes.HighlightMatches(tsHighlight)
+	m.viewport.SetContent(m.matchRes.Highlighted)
+}
+
+func (m model) getNextFocus() focus {
+	switch m.focus {
+	case focusInput:
+		return focusContent
+	case focusContent:
+		return focusInput
+	default:
+		return focusInput
+	}
 }

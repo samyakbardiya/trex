@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/samyakbardiya/trex/internal/ui"
@@ -12,13 +13,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const version = "0.0.0"
+
 var rootCmd = &cobra.Command{
 	Use:          "trex [file]",
 	Short:        "A TUI tool to work with RegEx",
 	Long:         "A TUI tool to work with RegEx",
 	Example:      util.CliExample,
 	Args:         cobra.MaximumNArgs(1),
-	Version:      "0.0.0",
+	Version:      version,
 	PreRunE:      preRun,
 	RunE:         run,
 	SilenceUsage: true,
@@ -31,48 +34,58 @@ func Execute() {
 }
 
 func preRun(cmd *cobra.Command, args []string) error {
-	var (
-		data     []byte
-		filePath string
-		err      error
-	)
-	if len(args) == 0 {
-		log.Println("Using default text")
-		data = []byte(util.DefaultText)
-	} else {
-		log.Println("Reading from file")
-		filePath, err = util.GetFilePath(args[0])
-		if err != nil {
-			return err
-		}
-		data, err = os.ReadFile(filePath)
-		if err != nil {
-			return err
-		}
+	data, err := loadInputData(args)
+	if err != nil {
+		return fmt.Errorf("failed to load input data: %w", err)
 	}
-	cmd.SetContext(context.WithValue(cmd.Context(), util.KeyFileData, data))
+
+	log.Printf("content: %q", data)
+	ctx := context.WithValue(cmd.Context(), util.KeyFileData, data)
+	cmd.SetContext(ctx)
 	return nil
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	file, ok := cmd.Context().Value(util.KeyFileData).([]byte)
+	data, ok := cmd.Context().Value(util.KeyFileData).([]byte)
 	if !ok {
 		return fmt.Errorf("unable to read content")
 	}
 
-	// NOTE: usage example
-	//
-	// expr := "Lorem"
-	// re, err := util.GetAllMatchingIndex(expr, file)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// log.Println("re", re)
-
-	p := tea.NewProgram(ui.InitialModel(string(file)), tea.WithAltScreen(), tea.WithMouseCellMotion())
+	p := tea.NewProgram(
+		ui.New(string(data)),
+		tea.WithAltScreen(),
+		tea.WithMouseCellMotion(),
+	)
 	if _, err := p.Run(); err != nil {
 		return fmt.Errorf("error while running program: %w", err)
 	}
 
 	return nil
+}
+
+func loadInputData(args []string) ([]byte, error) {
+	var text string
+
+	if len(args) == 0 {
+		log.Println("Using default text")
+		text = util.DefaultText
+	} else {
+		log.Println("Reading from file")
+		filePath, err := util.GetFilePath(args[0])
+		if err != nil {
+			return nil, err
+		}
+
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read file: %w", err)
+		}
+
+		text = string(data)
+	}
+
+	text = strings.TrimSpace(text)
+	text = strings.ReplaceAll(text, "\r\n", "\n")
+
+	return []byte(text), nil
 }
