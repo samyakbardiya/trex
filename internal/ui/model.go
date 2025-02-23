@@ -47,6 +47,7 @@ type model struct {
 func New(initialContent string) model {
 	input := textinput.New()
 	input.Placeholder = "RegEx"
+	input.Prompt = ""
 	input.Focus()
 
 	return model{

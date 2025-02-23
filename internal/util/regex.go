@@ -20,7 +20,7 @@ func (mr *MatchResult) FindMatches() error {
 	}
 
 	// TODO: implment customizable flags
-	re, err := regexp.Compile(mr.Pattern)
+	re, err := regexp.Compile("(?m)" + mr.Pattern)
 	if err != nil {
 		return fmt.Errorf("invalid regular expression: %q: %w", mr.Pattern, err)
 	}

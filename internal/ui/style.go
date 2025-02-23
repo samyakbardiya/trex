@@ -17,7 +17,7 @@ const (
 	cMagenta      = "5"
 	cCyan         = "6"
 	cLightGray    = "7"
-	cDarkGray     = "8"
+	cGray         = "8"
 	cLightRed     = "9"
 	cLightGreen   = "10"
 	cLightYellow  = "11"
@@ -31,7 +31,7 @@ const (
 
 // text-style
 var (
-	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cLightGray))
+	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cGray))
 	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true)
 	tsNormal    = lipgloss.NewStyle()
 )
