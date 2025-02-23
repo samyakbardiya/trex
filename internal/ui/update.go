@@ -3,7 +3,6 @@ package ui
 import (
 	"time"
 
-	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"golang.design/x/clipboard"
 )
@@ -52,6 +51,9 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case focusContent:
 		m.viewport, cmd = m.viewport.Update(msg)
 		return m, cmd
+	case focusCheatsheet:
+		m.cheatsheet, cmd = m.cheatsheet.Update(msg)
+		return m, cmd
 	}
 
 	return m, nil
@@ -60,8 +62,15 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 	m.width = msg.Width
 	m.height = msg.Height
-	m.viewport = viewport.New(m.width-4, m.height-8)
-	m.viewport.SetContent(m.matchRes.Highlighted)
+
+	maxViewportWidth := int(float32(m.width)*leftWidthRatio) - borderWidthDiff
+	m.viewport.Width = maxViewportWidth
+	m.viewport.Height = m.height - minHelpHeight - minInputHeight
+
+	maxCheatsheetWidth := int(float32(m.width)*rightWidthRatio) - borderWidthDiff
+	m.cheatsheet.SetWidth(maxCheatsheetWidth)
+	m.cheatsheet.SetHeight(m.height - minHelpHeight - 1)
+
 	return m, nil
 }
 
@@ -109,14 +118,19 @@ func (m *model) updateRegexMatches() {
 }
 
 func (m *model) getNextFocus() (tea.Model, tea.Cmd) {
+	var nextFocus focus
 	switch m.focus {
 	case focusInput:
-		m.focus = focusContent
+		nextFocus = focusContent
 	case focusContent:
-		m.focus = focusInput
+		nextFocus = focusCheatsheet
+	case focusCheatsheet:
+		nextFocus = focusInput
 	default:
-		m.focus = focusInput
+		nextFocus = focusInput
 	}
+	m.focus = nextFocus
+	m.cheatsheet.SetDelegate(itemDelegate{focus: nextFocus})
 	return m, nil
 }
 

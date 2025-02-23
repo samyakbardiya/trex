@@ -13,10 +13,25 @@ const (
 )
 
 func (m model) View() string {
+	if m.width < minWidth {
+		return m.renderBox("Window too small!\nPlease resize.", bsError)
+	}
+
 	switch m.state {
 	case stateActive:
-		s := []string{m.renderInputField(), m.renderContentView(), m.renderHelpText()}
-		return lipgloss.JoinVertical(lipgloss.Top, s...)
+		return lipgloss.JoinVertical(
+			lipgloss.Center,
+			lipgloss.JoinHorizontal(
+				lipgloss.Center,
+				lipgloss.JoinVertical(
+					lipgloss.Center,
+					m.renderInputField(),
+					m.renderContentView(),
+				),
+				m.renderCheatsheet(),
+			),
+			m.renderHelpText(),
+		)
 	case stateNotification:
 		return m.renderBox("RegEx copied to clipboard!", bsSuccess)
 	case stateExiting:
@@ -27,13 +42,15 @@ func (m model) View() string {
 }
 
 func (m model) renderInputField() string {
+	text := tsNormal.Render("> ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
+	style := bsUnfocus
 	if m.err != nil {
-		return bsError.Render(m.input.View())
+		style = bsError
+	} else if m.focus == focusInput {
+		style = bsFocus
 	}
-	if m.focus == focusInput {
-		return bsFocus.Render(m.input.View())
-	}
-	return bsUnfocus.Render(m.input.View())
+	maxWidth := int(float32(m.width)*leftWidthRatio) - borderWidthDiff
+	return style.Width(maxWidth).Render(text)
 }
 
 func (m model) renderContentView() string {
@@ -41,6 +58,14 @@ func (m model) renderContentView() string {
 		return bsFocus.Render(m.viewport.View())
 	}
 	return bsUnfocus.Render(m.viewport.View())
+}
+
+func (m model) renderCheatsheet() string {
+	view := m.cheatsheet.View()
+	if m.focus == focusCheatsheet {
+		return bsFocus.Render(view)
+	}
+	return bsUnfocus.Render(view)
 }
 
 func (m model) renderCentered(str string) string {
@@ -60,19 +85,28 @@ func (m model) renderHelpText() string {
 	switch m.focus {
 	case focusInput:
 		focusSpecificKeyBindings = []keyBinding{
-			{description: "Clear", binding: tea.KeyCtrlW.String()},
-			{description: "Copy RegEx", binding: tea.KeyEnter.String()},
+			{description: "clear", binding: tea.KeyCtrlW.String()},
+			{description: "copy regex", binding: tea.KeyEnter.String()},
 		}
 	case focusContent:
 		focusSpecificKeyBindings = []keyBinding{
-			{description: "Scroll Up", binding: tea.KeyUp.String()},
-			{description: "Scroll Down", binding: tea.KeyDown.String()},
+			{description: "scroll up", binding: tea.KeyUp.String()},
+			{description: "scroll down", binding: tea.KeyDown.String()},
+		}
+	case focusCheatsheet:
+		focusSpecificKeyBindings = []keyBinding{
+			{description: "up", binding: tea.KeyUp.String()},
+			{description: "down", binding: tea.KeyDown.String()},
+			{description: "next page", binding: tea.KeyRight.String()},
+			{description: "prev page", binding: tea.KeyLeft.String()},
+			{description: "goto start", binding: tea.KeyHome.String()},
+			{description: "goto end", binding: tea.KeyEnd.String()},
 		}
 	}
 
 	baseKeyBindings := []keyBinding{
 		{description: "Focus Next", binding: tea.KeyTab.String()},
-		{description: "Quit", binding: "q"},
+		{description: "Quit", binding: tea.KeyEsc.String()},
 		{description: "Force Quit", binding: tea.KeyCtrlC.String()},
 	}
 	keyBinding := append(focusSpecificKeyBindings, baseKeyBindings...)
@@ -81,5 +115,5 @@ func (m model) renderHelpText() string {
 	for _, kb := range keyBinding {
 		keyMap = append(keyMap, fmt.Sprintf("%s: <%s>", kb.description, kb.binding))
 	}
-	return tsHelp.Render(strings.Join(keyMap, " | "))
+	return tsHelp.MaxWidth(m.width).Render(strings.Join(keyMap, " | "))
 }
