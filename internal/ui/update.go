@@ -94,7 +94,7 @@ func (m model) handleTickMsg() (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m *model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.input, cmd = m.input.Update(msg)
 
@@ -115,7 +115,7 @@ func (m model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+func (m *model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.cheatsheet, cmd = m.cheatsheet.Update(msg)
 
@@ -126,7 +126,16 @@ func (m model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		inValue := m.input.Value()
 
 		if selected, ok := items[i].(item); ok {
-			m.input.SetValue(inValue + selected.pattern)
+			switch selected.itemType {
+			case itemCheatcode:
+				m.matchRes.Pattern = inValue + selected.pattern
+				m.input.SetValue(m.matchRes.Pattern)
+			case itemTemplate:
+				m.matchRes.Pattern = selected.pattern
+				m.matchRes.InputText = selected.testStr
+				m.input.SetValue(m.matchRes.Pattern)
+				m.viewport.SetContent(m.matchRes.InputText)
+			}
 			m.updateRegexMatches()
 		}
 	}
