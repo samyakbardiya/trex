@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,16 +13,25 @@ const (
 )
 
 func (m model) View() string {
+	if m.width < minWidth {
+		return m.renderBox("Window too small!\nPlease resize.", bsError)
+	}
+
 	switch m.state {
 	case stateActive:
-		return lipgloss.JoinHorizontal(
-			lipgloss.Left,
-			lipgloss.JoinVertical(
-				lipgloss.Top,
-				m.renderInputField(),
-				m.renderContentView(),
-				m.renderHelpText()),
-			m.renderCheatsheet())
+		return lipgloss.JoinVertical(
+			lipgloss.Center,
+			lipgloss.JoinHorizontal(
+				lipgloss.Center,
+				lipgloss.JoinVertical(
+					lipgloss.Center,
+					m.renderInputField(),
+					m.renderContentView(),
+				),
+				m.renderCheatsheet(),
+			),
+			m.renderHelpText(),
+		)
 	case stateNotification:
 		return m.renderBox("RegEx copied to clipboard!", bsSuccess)
 	case stateExiting:
@@ -34,15 +42,15 @@ func (m model) View() string {
 }
 
 func (m model) renderInputField() string {
-	inputText := tsNormal.Render("> ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
+	text := tsNormal.Render("> ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
+	width := int(float32(m.width) * leftWidthRatio)
+	style := bsUnfocus
 	if m.err != nil {
-		log.Print("error:", m.err)
-		return bsError.Width(m.width - 4).Render(inputText)
+		style = bsError
+	} else if m.focus == focusInput {
+		style = bsFocus
 	}
-	if m.focus == focusInput {
-		return bsFocus.Width(m.width - 4).Render(inputText)
-	}
-	return bsUnfocus.Width(m.width - 4).Render(inputText)
+	return style.Width(width).Render(text)
 }
 
 func (m model) renderContentView() string {

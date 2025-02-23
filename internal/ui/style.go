@@ -11,6 +11,13 @@ import (
 const (
 	colorsPerRow    = 8
 	maxColors       = 16
+	minWidth        = 80
+	minHeight       = 24
+	leftWidthRatio  = 0.70
+	rightWidthRatio = 0.20
+	minInputHeight  = 4
+	minHelpHeight   = 2
+	borderWidthDiff = 4  // 2*2 |#||#|
 	widthDiff       = 20 // offset caused by the borders
 	widthCheatsheet = 30 // width of the cheatsheet
 )

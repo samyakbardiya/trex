@@ -162,18 +162,21 @@ type model struct {
 }
 
 func New(initialContent string) model {
-	input := textinput.New()
-	input.Placeholder = "RegEx"
-	input.Prompt = ""
-	input.Focus()
+	in := textinput.New()
+	in.Placeholder = "RegEx"
+	in.Prompt = ""
+	in.Focus()
 
-	ch := list.New(items, itemDelegate{}, widthCheatsheet, 48)
+	ch := list.New(items, itemDelegate{}, minWidth*rightWidthRatio, 48)
 	ch.SetFilteringEnabled(false)
 	ch.SetShowFilter(false)
 	ch.SetShowStatusBar(false)
 	ch.SetShowTitle(false)
 	ch.Styles.PaginationStyle = tsNormal
 	ch.Styles.HelpStyle = tsHelp
+
+	vp := viewport.New(minWidth*leftWidthRatio, minHeight)
+	vp.SetContent(initialContent)
 
 	return model{
 		state: stateActive,
@@ -182,7 +185,8 @@ func New(initialContent string) model {
 			InputText:   initialContent,
 			Highlighted: initialContent,
 		},
-		input:      input,
+		input:      in,
+		viewport:   vp,
 		cheatsheet: ch,
 		err:        nil,
 	}

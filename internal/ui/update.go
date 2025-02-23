@@ -3,7 +3,6 @@ package ui
 import (
 	"time"
 
-	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"golang.design/x/clipboard"
 )
@@ -63,8 +62,13 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 	m.width = msg.Width
 	m.height = msg.Height
-	m.viewport = viewport.New(m.width-4, m.height-8)
-	m.viewport.SetContent(m.matchRes.Highlighted)
+
+	m.viewport.Width = int(float32(m.width) * leftWidthRatio)
+	m.viewport.Height = m.height - minHelpHeight - minInputHeight
+
+	m.cheatsheet.SetWidth(int(float32(m.width) * rightWidthRatio))
+	m.cheatsheet.SetHeight(m.height - minHelpHeight - 1)
+
 	return m, nil
 }
 
