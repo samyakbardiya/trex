@@ -16,8 +16,14 @@ const (
 func (m model) View() string {
 	switch m.state {
 	case stateActive:
-		s := []string{m.renderInputField(), m.renderContentView(), m.renderHelpText()}
-		return lipgloss.JoinVertical(lipgloss.Top, s...)
+		return lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			lipgloss.JoinVertical(
+				lipgloss.Top,
+				m.renderInputField(),
+				m.renderContentView(),
+				m.renderHelpText()),
+			m.renderCheatsheet())
 	case stateNotification:
 		return m.renderBox("RegEx copied to clipboard!", bsSuccess)
 	case stateExiting:
@@ -44,6 +50,14 @@ func (m model) renderContentView() string {
 		return bsFocus.Render(m.viewport.View())
 	}
 	return bsUnfocus.Render(m.viewport.View())
+}
+
+func (m model) renderCheatsheet() string {
+	view := m.cheatsheet.View()
+	if m.focus == focusCheatsheet {
+		return bsFocus.Render(view)
+	}
+	return bsUnfocus.Render(view)
 }
 
 func (m model) renderCentered(str string) string {
@@ -75,7 +89,7 @@ func (m model) renderHelpText() string {
 
 	baseKeyBindings := []keyBinding{
 		{description: "Focus Next", binding: tea.KeyTab.String()},
-		{description: "Quit", binding: "q"},
+		{description: "Quit", binding: tea.KeyEsc.String()},
 		{description: "Force Quit", binding: tea.KeyCtrlC.String()},
 	}
 	keyBinding := append(focusSpecificKeyBindings, baseKeyBindings...)

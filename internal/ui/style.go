@@ -9,31 +9,40 @@ import (
 )
 
 const (
-	cBlack        = "0"
-	cRed          = "1"
-	cGreen        = "2"
-	cYellow       = "3"
-	cBlue         = "4"
-	cMagenta      = "5"
-	cCyan         = "6"
-	cLightGray    = "7"
-	cGray         = "8"
-	cLightRed     = "9"
-	cLightGreen   = "10"
-	cLightYellow  = "11"
-	cLightBlue    = "12"
-	cLightMagenta = "13"
-	cLightCyan    = "14"
-	cWhite        = "15"
-	colorsPerRow  = 8
-	maxColors     = 16
+	colorsPerRow    = 8
+	maxColors       = 16
+	widthDiff       = 20 // offset caused by the borders
+	widthCheatsheet = 30 // width of the cheatsheet
+)
+
+var (
+	cBlack        = lipgloss.Color("00")
+	cRed          = lipgloss.Color("01")
+	cGreen        = lipgloss.Color("02")
+	cYellow       = lipgloss.Color("03")
+	cBlue         = lipgloss.Color("04")
+	cMagenta      = lipgloss.Color("05")
+	cCyan         = lipgloss.Color("06")
+	cLightGray    = lipgloss.Color("07")
+	cGray         = lipgloss.Color("08")
+	cLightRed     = lipgloss.Color("09")
+	cLightGreen   = lipgloss.Color("10")
+	cLightYellow  = lipgloss.Color("11")
+	cLightBlue    = lipgloss.Color("12")
+	cLightMagenta = lipgloss.Color("13")
+	cLightCyan    = lipgloss.Color("14")
+	cWhite        = lipgloss.Color("15")
 )
 
 // text-style
 var (
-	tsHelp      = lipgloss.NewStyle().Foreground(lipgloss.Color(cGray))
-	tsHighlight = lipgloss.NewStyle().Foreground(lipgloss.Color(cBlack)).Background(lipgloss.Color(cGreen)).Bold(true)
-	tsNormal    = lipgloss.NewStyle()
+	tsHelp                  = lipgloss.NewStyle().Foreground(cGray)
+	tsHighlight             = lipgloss.NewStyle().Foreground(cBlack).Background(cGreen).Bold(true)
+	tsNormal                = lipgloss.NewStyle()
+	tsCheatsheetDescription = tsNormal.AlignHorizontal(lipgloss.Left)
+	tsCheatsheetPattern     = lipgloss.NewStyle().Foreground(cYellow).AlignHorizontal(lipgloss.Right)
+	tsListDefault           = tsNormal.Padding(0, 1)
+	tsListSelected          = lipgloss.NewStyle().Padding(0, 1).Reverse(true).Bold(true)
 )
 
 // border-style

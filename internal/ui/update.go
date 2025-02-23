@@ -52,6 +52,9 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case focusContent:
 		m.viewport, cmd = m.viewport.Update(msg)
 		return m, cmd
+	case focusCheatsheet:
+		m.cheatsheet, cmd = m.cheatsheet.Update(msg)
+		return m, cmd
 	}
 
 	return m, nil
@@ -113,6 +116,8 @@ func (m *model) getNextFocus() (tea.Model, tea.Cmd) {
 	case focusInput:
 		m.focus = focusContent
 	case focusContent:
+		m.focus = focusCheatsheet
+	case focusCheatsheet:
 		m.focus = focusInput
 	default:
 		m.focus = focusInput
