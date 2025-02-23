@@ -18,9 +18,9 @@ func (m model) View() string {
 		s := []string{m.renderInputField(), m.renderContentView(), m.renderHelpText()}
 		return lipgloss.JoinVertical(lipgloss.Top, s...)
 	case stateAlertClipboard:
-		return m.renderSuccessBox("RegEx copied to clipboard!")
+		return m.renderBox("RegEx copied to clipboard!", bsSuccess)
 	case stateExiting:
-		return m.renderErrorBox("Do you really want to quit? [y/N]")
+		return m.renderBox("Do you really want to quit? [y/N]", bsError)
 	default:
 		return ""
 	}
@@ -43,17 +43,9 @@ func (m model) renderContentView() string {
 	return bsUnfocus.Render(m.viewport.View())
 }
 
-func (m model) renderErrorBox(message string) string {
-	box := bsError.Padding(1, 4).Render(message)
-	if w, h := lipgloss.Size(box); m.width < w || m.height < h {
-		return lipgloss.NewStyle().Width(m.width).Render(message)
-	}
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, box)
-}
-
-func (m model) renderSuccessBox(message string) string {
-	box := bsSuccess.Padding(1, 4).Render(message)
-	if w, h := lipgloss.Size(box); m.width < w || m.height < h {
+func (m model) renderBox(message string, style lipgloss.Style) string {
+	box := style.Padding(1, 4).Render(message)
+	if w, _ := lipgloss.Size(box); m.width < w {
 		return lipgloss.NewStyle().Width(m.width).Render(message)
 	}
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, box)
@@ -81,13 +73,9 @@ func (m model) renderHelpText() string {
 	}
 	keyBinding := append(focusSpecificKeyBindings, baseKeyBindings...)
 
-	var sb strings.Builder
-	for i, kb := range keyBinding {
-		fmt.Fprintf(&sb, "%s: <%s>", kb.description, kb.binding)
-		if i < len(keyBinding)-1 {
-			sb.WriteString(" | ")
-		}
+	var keyMap []string
+	for _, kb := range keyBinding {
+		keyMap = append(keyMap, fmt.Sprintf("%s: <%s>", kb.description, kb.binding))
 	}
-
-	return tsHelp.Render(sb.String())
+	return tsHelp.Render(strings.Join(keyMap, " | "))
 }
