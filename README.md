@@ -1,4 +1,16 @@
+<!-- markdownlint-disable MD033 -->
+<!-- marksman:disable MD033 -->
+
 # TReX
+
+<!-- markdownlint-disable MD013 -->
+<p>
+  <a href="https://github.com/samyakbardiya/trex/releases"><img src="https://img.shields.io/github/v/release/samyakbardiya/trex" alt="GitHub Release"></a>
+  <a href="https://pkg.go.dev/github.com/samyakbardiya/trex"><img src="https://pkg.go.dev/badge/github.com/samyakbardiya/trex.svg" alt="Go Reference"></a>
+  <a href="https://goreportcard.com/report/github.com/samyakbardiya/trex"><img src="https://goreportcard.com/badge/github.com/samyakbardiya/trex" alt="Go Report Card"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+</p>
+<!-- markdownlint-enable MD013 -->
 
 **TReX** is a terminal-based tool for writing, visualizing, and testing Regular
 Expressions. Designed for efficiency, it provides a keyboard-driven interface
@@ -6,34 +18,25 @@ for rapid feedback on your regex experiments—all within your terminal.
 
 [![asciicast](https://asciinema.org/a/704948.svg)](https://asciinema.org/a/704948)
 
-<p align="center">
-  <a href="https://github.com/samyakbardiya/trex">
-    <img src="https://img.shields.io/github/go-mod/go-version/samyakbardiya/trex" alt="GitHub go.mod Go version">
-  </a>
-  <a href="https://goreportcard.com/report/github.com/samyakbardiya/trex">
-    <img src="https://goreportcard.com/badge/github.com/samyakbardiya/trex" alt="Go Report Card">
-  </a>
-  <a href="./LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
-  </a>
-  <a href="https://github.com/samyakbardiya/trex/releases">
-    <img src="https://img.shields.io/github/v/release/samyakbardiya/trex?include_prereleases" alt="GitHub Release">
-  </a>
-</p>
+<!-- markdownlint-disable MD004 -->
+<!-- markdownlint-disable MD007 -->
 
 <!-- toc -->
 
 - [Why TReX?](#why-trex)
+  * [Okay, but why "TReX"?](#okay-but-why-trex)
 - [Features](#features)
 - [Installation](#installation)
-  * [Prerequisites](#prerequisites)
-  * [Steps](#steps)
+  * [From the source](#from-the-source)
 - [Usage](#usage)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [Implementation](#implementation)
 
 <!-- tocstop -->
+
+<!-- markdownlint-enable MD004 -->
+<!-- markdownlint-enable MD007 -->
 
 ## Why TReX?
 
@@ -47,7 +50,10 @@ interacts with your text in real time—all within your terminal.
 - **Integrated testing:** Load files and experiment with regex combinations.
 - **Efficient workflow:** Stay in your terminal and keep your focus on writing code.
 
-Btw, `T` is from **T**UI and `ReX` from **R**eg**Ex**, hence **_TReX_**.
+### Okay, but why "TReX"?
+
+TReX, is a playful fusion of TUI and RegEx.
+The `T` comes from **T**UI, while `ReX` from **R**eg**Ex**, hence **_TReX_**.
 :t-rex: roar!
 
 ## Features
@@ -59,13 +65,16 @@ Btw, `T` is from **T**UI and `ReX` from **R**eg**Ex**, hence **_TReX_**.
 
 ## Installation
 
-### Prerequisites
+- **Install from Go Package Reference**:
 
-Make sure you have the following installed:
+  ```sh
+  go install github.com/samyakbardiya/trex@latest
+  ```
 
-- [Go](https://go.dev/)
+<details>
+  <summary>OR from the source</summary>
 
-### Steps
+### From the source
 
 - **Clone the repository:**
 
@@ -92,6 +101,8 @@ Make sure you have the following installed:
   ```sh
   ./trex --version
   ```
+
+</details>
 
 ## Usage
 
@@ -143,9 +154,16 @@ Developed in Go, **TReX** leverages:
 ---
 
 <p align="center">
-  Made during <a href="https://fossunited.org/fosshack/2025">FOSS HACK 2025</a> in India :india:
+  Made during
+  <a href="https://fossunited.org/fosshack/2025">FOSS HACK 2025</a>
+  in India :india:
 </p>
 
 <p align="center">
-<sup>By <a href="https://links.samyakbardiya.dev">Samyak Bardiya</a> &amp; <a href="https://github.com/mitalrs">Mital Sapkale</a></sup>
+  <sup>
+    By
+    <a href="https://links.samyakbardiya.dev">Samyak Bardiya</a>
+    &amp;
+    <a href="https://github.com/mitalrs">Mital Sapkale</a>
+  </sup>
 </p>
