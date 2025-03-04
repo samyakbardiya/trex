@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD033 -->
 <!-- marksman:disable MD033 -->
 
-# TReX
+# TReX :t-rex:
 
 <!-- markdownlint-disable MD013 -->
 <p>
@@ -52,9 +52,8 @@ interacts with your text in real time—all within your terminal.
 
 ### Okay, but why "TReX"?
 
-TReX, is a playful fusion of TUI and RegEx.
-The `T` comes from **T**UI, while `ReX` from **R**eg**Ex**, hence **_TReX_**.
-:t-rex: roar!
+TReX, is a playful fusion of TUI and RegEx. The `T` comes from **T**UI,
+while `ReX` from **R**eg**Ex**, hence **_TReX_** :t-rex:. Roar!
 
 ## Features
 

@@ -123,21 +123,27 @@ func (m *model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case tea.KeyEnter:
 		i := m.cheatsheet.Index()
 		items := m.cheatsheet.Items()
-		inValue := m.input.Value()
-
-		if selected, ok := items[i].(item); ok {
-			switch selected.itemType {
-			case itemCheatcode:
-				m.matchRes.Pattern = inValue + selected.pattern
-				m.input.SetValue(m.matchRes.Pattern)
-			case itemTemplate:
-				m.matchRes.Pattern = selected.pattern
-				m.matchRes.InputText = selected.testStr
-				m.input.SetValue(m.matchRes.Pattern)
-				m.viewport.SetContent(m.matchRes.InputText)
-			}
-			m.updateRegexMatches()
+		if i < 0 || i >= len(items) {
+			return m, cmd
 		}
+
+		inValue := m.input.Value()
+		selected, ok := items[i].(item)
+		if !ok {
+			return m, cmd
+		}
+
+		switch selected.itemType {
+		case itemCheatcode:
+			m.matchRes.Pattern = inValue + selected.pattern
+			m.input.SetValue(m.matchRes.Pattern)
+		case itemTemplate:
+			m.matchRes.Pattern = selected.pattern
+			m.matchRes.InputText = selected.testStr
+			m.input.SetValue(m.matchRes.Pattern)
+			m.viewport.SetContent(m.matchRes.InputText)
+		}
+		m.updateRegexMatches()
 	}
 
 	return m, cmd
