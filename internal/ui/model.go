@@ -20,6 +20,7 @@ const (
 	focusInput focus = iota
 	focusContent
 	focusCheatsheet
+	maxFocus
 )
 
 // state represents the current state of the application

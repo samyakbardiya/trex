@@ -158,19 +158,10 @@ func (m *model) updateRegexMatches() {
 }
 
 func (m *model) getNextFocus() (tea.Model, tea.Cmd) {
-	var nextFocus focus
-	switch m.focus {
-	case focusInput:
-		nextFocus = focusContent
-	case focusContent:
-		nextFocus = focusCheatsheet
-	case focusCheatsheet:
-		nextFocus = focusInput
-	default:
-		nextFocus = focusInput
-	}
-	m.focus = nextFocus
-	m.cheatsheet.SetDelegate(itemDelegate{focus: nextFocus})
+	m.focus = (m.focus + 1) % maxFocus
+	m.cheatsheet.SetDelegate(itemDelegate{focus: m.focus})
+	return m, nil
+}
 	return m, nil
 }
 
