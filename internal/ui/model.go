@@ -1,3 +1,5 @@
+// Package ui provides the terminal user interface components and logic
+// for the application. It handles rendering and user input.
 package ui
 
 import (

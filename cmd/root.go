@@ -1,3 +1,5 @@
+// Package cmd provides the command-line interface (CLI) commands
+// and the main entry point for the application.
 package cmd
 
 import (
