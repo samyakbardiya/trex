@@ -30,6 +30,8 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.getNextFocus()
 	case tea.KeyCtrlC:
 		return m, tea.Quit
+	case tea.KeyShiftTab:
+		return m.getPrevFocus()
 	}
 
 	switch m.state {
@@ -162,6 +164,10 @@ func (m *model) getNextFocus() (tea.Model, tea.Cmd) {
 	m.cheatsheet.SetDelegate(itemDelegate{focus: m.focus})
 	return m, nil
 }
+
+func (m *model) getPrevFocus() (tea.Model, tea.Cmd) {
+	m.focus = (m.focus + maxFocus - 1) % maxFocus
+	m.cheatsheet.SetDelegate(itemDelegate{focus: m.focus})
 	return m, nil
 }
 
