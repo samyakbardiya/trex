@@ -51,7 +51,8 @@ func (m model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case focusInput:
 		return m.handleInputUpdate(msg)
 	case focusContent:
-		m.viewport, cmd = m.viewport.Update(msg)
+		// m.viewport, cmd = m.viewport.Update(msg)
+		m.textarea, cmd = m.textarea.Update(msg)
 		return m, cmd
 	case focusCheatsheet:
 		return m.handleCheatsheetKeyMsg(msg)
@@ -64,9 +65,9 @@ func (m model) handleWindowSizeMsg(msg tea.WindowSizeMsg) (tea.Model, tea.Cmd) {
 	m.width = msg.Width
 	m.height = msg.Height
 
-	maxViewportWidth := int(float32(m.width)*leftWidthRatio) - borderWidthDiff
-	m.viewport.Width = maxViewportWidth
-	m.viewport.Height = m.height - minHelpHeight - minInputHeight
+	// maxViewportWidth := int(float32(m.width)*leftWidthRatio) - borderWidthDiff
+	// m.viewport.Width = maxViewportWidth
+	// m.viewport.Height = m.height - minHelpHeight - minInputHeight
 
 	maxCheatsheetWidth := int(float32(m.width)*rightWidthRatio) - borderWidthDiff
 	m.cheatsheet.SetWidth(maxCheatsheetWidth)
@@ -79,7 +80,8 @@ func (m model) handleMouseMsg(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
-	m.viewport, cmd = m.viewport.Update(msg)
+	// m.viewport, cmd = m.viewport.Update(msg)
+	m.textarea, cmd = m.textarea.Update(msg)
 	cmds = append(cmds, cmd)
 
 	m.cheatsheet, cmd = m.cheatsheet.Update(msg)
@@ -98,7 +100,7 @@ func (m model) handleTickMsg() (tea.Model, tea.Cmd) {
 
 func (m *model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	m.input, cmd = m.input.Update(msg)
+	m.textinput, cmd = m.textinput.Update(msg)
 
 	switch msg.Type {
 	case tea.KeyEnter:
@@ -108,8 +110,8 @@ func (m *model) handleInputUpdate(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd, timeout(1*time.Second))
 		}
 	default:
-		if m.matchRes.Pattern != m.input.Value() {
-			m.matchRes.Pattern = m.input.Value()
+		if m.matchRes.Pattern != m.textinput.Value() {
+			m.matchRes.Pattern = m.textinput.Value()
 			m.updateRegexMatches()
 		}
 	}
@@ -129,7 +131,7 @@ func (m *model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		}
 
-		inValue := m.input.Value()
+		inValue := m.textinput.Value()
 		selected, ok := items[i].(item)
 		if !ok {
 			return m, cmd
@@ -138,12 +140,13 @@ func (m *model) handleCheatsheetKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch selected.itemType {
 		case itemCheatcode:
 			m.matchRes.Pattern = inValue + selected.pattern
-			m.input.SetValue(m.matchRes.Pattern)
+			m.textinput.SetValue(m.matchRes.Pattern)
 		case itemTemplate:
 			m.matchRes.Pattern = selected.pattern
 			m.matchRes.InputText = selected.testStr
-			m.input.SetValue(m.matchRes.Pattern)
-			m.viewport.SetContent(m.matchRes.InputText)
+			m.textinput.SetValue(m.matchRes.Pattern)
+			// m.viewport.SetContent(m.matchRes.InputText)
+			m.textarea.SetValue(m.matchRes.InputText)
 		}
 		m.updateRegexMatches()
 	}
@@ -156,7 +159,8 @@ func (m *model) updateRegexMatches() {
 		return
 	}
 	m.matchRes.HighlightMatches(tsHighlight.Render)
-	m.viewport.SetContent(m.matchRes.Highlighted)
+	// m.viewport.SetContent(m.matchRes.Highlighted)
+	m.textarea.SetValue(m.matchRes.Highlighted)
 }
 
 func (m *model) getNextFocus() (tea.Model, tea.Cmd) {

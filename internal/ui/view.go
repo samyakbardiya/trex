@@ -42,7 +42,7 @@ func (m model) View() string {
 }
 
 func (m model) renderInputField() string {
-	text := tsNormal.Render("TReX => ") + tsHelp.Render("/") + m.input.View() + tsHelp.Render("/gm")
+	text := tsNormal.Render("TReX => ") + tsHelp.Render("/") + m.textinput.View() + tsHelp.Render("/gm")
 	style := bsUnfocus
 	if m.err != nil {
 		style = bsError
@@ -55,9 +55,11 @@ func (m model) renderInputField() string {
 
 func (m model) renderContentView() string {
 	if m.focus == focusContent {
-		return bsFocus.Render(m.viewport.View())
+		// return bsFocus.Render(m.viewport.View())
+		return bsFocus.Render(m.textarea.View())
 	}
-	return bsUnfocus.Render(m.viewport.View())
+	// return bsUnfocus.Render(m.viewport.View())
+	return bsUnfocus.Render(m.textarea.View())
 }
 
 func (m model) renderCheatsheet() string {

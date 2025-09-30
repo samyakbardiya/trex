@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -212,29 +213,36 @@ type model struct {
 	state      state            // current state of the application
 	focus      focus            // current focus of the UI
 	matchRes   util.MatchResult // result of the regex matching operation
-	input      textinput.Model  // model for handling input
-	viewport   viewport.Model   // model for handling content
+	textinput  textinput.Model  // model for handling input
+	textarea   textarea.Model   // model for handling content
 	cheatsheet list.Model       // model for handling cheatsheet
 	width      int              // width of the window
 	height     int              // height of the window
 	time       tickMsg          // tracks tick events for state transitions
 	err        error            // any error encountered during application execution
+	// viewport   viewport.Model   // model for handling content
 }
 
 func New(initialContent string) model {
-	in := textinput.New()
-	in.Placeholder = "RegEx"
-	in.Prompt = ""
-	in.Focus()
+	ti := textinput.New()
+	ti.Placeholder = "RegEx"
+	ti.Prompt = ""
+	ti.Focus()
 
-	ch := list.New(items, itemDelegate{focus: focusInput}, minWidth*rightWidthRatio, 48)
-	ch.SetFilteringEnabled(false)
-	ch.SetShowFilter(false)
-	ch.SetShowHelp(false)
-	ch.SetShowStatusBar(false)
-	ch.SetShowTitle(false)
-	ch.Styles.PaginationStyle = tsNormal
-	ch.Styles.HelpStyle = tsHelp
+	cs := list.New(items, itemDelegate{focus: focusInput}, minWidth*rightWidthRatio, 48)
+	cs.SetFilteringEnabled(false)
+	cs.SetShowFilter(false)
+	cs.SetShowHelp(false)
+	cs.SetShowStatusBar(false)
+	cs.SetShowTitle(false)
+	cs.Styles.PaginationStyle = tsNormal
+	cs.Styles.HelpStyle = tsHelp
+
+	ta := textarea.New()
+	ta.SetWidth(minWidth * leftWidthRatio)
+	ta.SetHeight(minHeight)
+	ta.SetValue(initialContent)
+	ta.Focus()
 
 	vp := viewport.New(minWidth*leftWidthRatio, minHeight)
 	vp.SetContent(initialContent)
@@ -246,10 +254,11 @@ func New(initialContent string) model {
 			InputText:   initialContent,
 			Highlighted: initialContent,
 		},
-		input:      in,
-		viewport:   vp,
-		cheatsheet: ch,
+		textinput:  ti,
+		textarea:   ta,
+		cheatsheet: cs,
 		err:        nil,
+		// viewport:   vp,
 	}
 }
 
